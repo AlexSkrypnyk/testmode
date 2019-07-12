@@ -2,6 +2,8 @@
 Drupal 8 module used to alter existing site content and other
 configurations when running tests.
 
+[![CircleCI](https://circleci.com/gh/integratedexperts/testmate.svg?style=shield)](https://circleci.com/gh/integratedexperts/testmate)
+
 ## Usecase 
 Running a Behat test on the site with existing content may result in
 FALSE positives because of the live content being mixed with test content.

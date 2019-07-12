@@ -46,4 +46,4 @@ echo "==> Adding remote ${DEPLOY_REMOTE}"
 git remote add deployremote ${DEPLOY_REMOTE}
 
 echo "==> Deploying to remote ${DEPLOY_REMOTE}"
-git push --tags deployremote
+git push --tags --force deployremote
