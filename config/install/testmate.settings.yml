@@ -6,11 +6,5 @@ views_user:
   - user_admin_people
 pattern_node: '[TEST%'
 pattern_term: '[TEST%'
-pattern_user: %example%
-list_term: 1
-dependencies:
-  module:
-    - testmate
-  enforced:
-    module:
-      - testmate
+pattern_user: '%example%'
+list_term: true

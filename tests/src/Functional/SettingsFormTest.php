@@ -3,11 +3,11 @@
 namespace Drupal\Tests\testmate\Functional;
 
 /**
- * Tests the configuration form.
+ * Tests the settings form.
  *
  * @group Testmate
  */
-class ConfigFormTest extends TestmateTestBase {
+class SettingsFormTest extends TestmateTestBase {
 
   /**
    * Modules to enable.
@@ -17,9 +17,9 @@ class ConfigFormTest extends TestmateTestBase {
   public static $modules = ['testmate'];
 
   /**
-   * Test that configuration form works correctly.
+   * Test that setting form works correctly.
    */
-  public function testConfigFormDefaults() {
+  public function testSettingsFormDefaults() {
     $this->drupalLoginAdmin();
 
     $this->drupalGet('admin/config/development/testmate');

@@ -4,7 +4,19 @@
 #
 set -e
 
-mkdir -p /tmp/artifacts
+MODULE=$(basename -s .info.yml -- ./*.info.yml)
 
 echo "==> Lint code"
-composer lint
+build/vendor/bin/phpcs --standard=Drupal "build/web/modules/${MODULE}"
+
+echo "==> Run tests"
+mkdir -p /tmp/test_results/simpletest
+php ./build/web/core/scripts/run-tests.sh \
+  --sqlite /tmp/test.sqlite \
+  --dburl sqlite://localhost//tmp/test.sqlite \
+  --url http://localhost:8000 \
+  --non-html \
+  --xml /tmp/test_results/simpletest \
+  --color \
+  --verbose \
+  --module "${MODULE}"

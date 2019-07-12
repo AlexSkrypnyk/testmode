@@ -1,0 +1,33 @@
+# Schema for the configuration files of the Testmate module.
+
+testmate.settings:
+  type: config_object
+  label: 'Testmate settings'
+  mapping:
+    views_node:
+      label: 'List of node views'
+      type: sequence
+      sequence:
+        type: string
+    views_term:
+      label: 'List of term views'
+      type: sequence
+      sequence:
+        type: string
+    views_user:
+      label: 'List of user views'
+      type: sequence
+      sequence:
+        type: string
+    list_term:
+      label: 'Flag to apply test mode to Terms Overview page'
+      type: boolean
+    pattern_node:
+      label: 'Pattern for nodes'
+      type: string
+    pattern_term:
+      label: 'Pattern for terms'
+      type: string
+    pattern_user:
+      label: 'Pattern for user'
+      type: string
