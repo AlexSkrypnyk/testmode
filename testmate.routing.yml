@@ -1,0 +1,7 @@
+testmate.admin_settings:
+  path: '/admin/config/development/testmate'
+  defaults:
+    _form: '\Drupal\testmate\Form\ConfigForm'
+    _title: 'Testmate'
+  requirements:
+    _permission: 'administer site configuration'

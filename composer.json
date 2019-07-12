@@ -1,0 +1,42 @@
+{
+    "name": "drupal/testmate",
+    "description": "Alter existing site content and other configurations when running tests.",
+    "type": "drupal-module",
+    "keywords": [
+        "Drupal",
+        "Testing",
+        "Simpletest",
+        "Behat"
+    ],
+    "homepage": "http://drupal.org/project/testmate",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Alex Skrypnyk",
+            "homepage": "https://www.drupal.org/u/alex.designworks",
+            "role": "Maintainer"
+        }
+    ],
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/testmate",
+        "source": "http://cgit.drupalcode.org/testmate"
+    },
+    "require": {},
+    "require-dev": {
+        "behat/behat": "^3.5",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.4.4",
+        "drupal/coder": "^8.2.12",
+        "drupal/drupal-extension": "^3.4",
+        "integratedexperts/behat-screenshot": "^0.7",
+        "phpunit/phpunit": "^6.5",
+        "symfony/filesystem": "^3.2.8"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-8.x-1.x": "8.1.x-dev"
+        }
+    },
+    "scripts": {
+        "lint": "phpcs --standard=Drupal --ignore=vendor/*,web/* ."
+    }
+}

@@ -1,0 +1,5 @@
+testmate.admin_settings:
+  title: 'Testmate'
+  description: 'Testmate configuration to enable/disable test mode, adjust content patterns etc.'
+  route_name: testmate.admin_settings
+  parent: system.admin_config_development

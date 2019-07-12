@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Install and uninstall functionality for Testmate module.
+ */
+
+use Drupal\testmate\Testmate;
+
+/**
+ * Implements hook_uninstall().
+ */
+function testmate_uninstall() {
+  Testmate::getInstance()->disableTestMode();
+}

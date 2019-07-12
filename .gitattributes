@@ -1,0 +1,6 @@
+# Ignore files for distribution archives.
+
+.circleci/config.yml      export-ignore
+.gitattributes            export-ignore
+.gitignore                export-ignore
+composer.json             export-ignore

@@ -1,0 +1,9 @@
+name: Tesmate module test
+type: module
+description: 'Support module for Testmate related testing.'
+package: Testing
+core: 8.x
+dependencies:
+  - testmate:testmate
+  - drupal:node
+  - drupal:views

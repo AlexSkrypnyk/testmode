@@ -1,0 +1,8 @@
+name: Tesmate
+description: Alter existing site content and other configurations when running tests.
+type: module
+package: Development
+configure: testmate.admin_settings
+core: 8.x
+tags:
+  - developer
