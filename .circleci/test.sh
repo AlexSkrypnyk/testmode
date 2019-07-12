@@ -7,7 +7,7 @@ set -e
 MODULE=$(basename -s .info.yml -- ./*.info.yml)
 
 echo "==> Lint code"
-build/vendor/bin/phpcs --standard=Drupal "build/web/modules/${MODULE}"
+build/vendor/bin/phpcs -s --standard=Drupal,DrupalPractice "build/web/modules/${MODULE}"
 
 echo "==> Run tests"
 mkdir -p /tmp/test_results/simpletest

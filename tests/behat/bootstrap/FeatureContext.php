@@ -3,6 +3,9 @@
 /**
  * @file
  * Mental Health Online Drupal context for Behat testing.
+ *
+ * Disable classname rule as this file is Drupal-agnostic.
+ * @phpcs:disable DrupalPractice.General.ClassName.ClassPrefix
  */
 
 use Drupal\DrupalExtension\Context\DrupalContext;
