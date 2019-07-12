@@ -4,7 +4,11 @@ configurations when running tests.
 
 [![CircleCI](https://circleci.com/gh/integratedexperts/testmate.svg?style=shield)](https://circleci.com/gh/integratedexperts/testmate)
 
-## Usecase 
+This is a module to support testing, so it is not expected to be used in 
+production (although, it adheres to Drupal coding standards and has good test 
+coverage).
+
+## Use case 
 Running a Behat test on the site with existing content may result in
 FALSE positives because of the live content being mixed with test content.
 
@@ -23,4 +27,7 @@ resulting in false positive failure.
    fit the pattern, leaving only content items created by the test.
 
 ## Development 
-Releases in GitHub are automatically pushed to drupal.org by CI.
+Releases in GitHub are automatically pushed to http://drupal.org/project/testmate by CI.
+
+## Issues
+https://www.drupal.org/project/issues/testmate
