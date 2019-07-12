@@ -43,7 +43,7 @@ class Testmate {
    * Testmate constructor.
    */
   public function __construct() {
-    $this->config = \Drupal::configFactory()->getEditable('testmate.config');
+    $this->config = \Drupal::configFactory()->getEditable('testmate.settings');
     $this->state = \Drupal::state();
   }
 

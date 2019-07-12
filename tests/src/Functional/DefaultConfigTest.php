@@ -15,7 +15,7 @@ class DefaultConfigTest extends TestmateTestBase {
   public function testDefaultConfig() {
     $this->assertEquals(['content'], $this->testmate->getNodeViews());
     $this->assertEquals([''], $this->testmate->getTermViews());
-    $this->assertEquals(1, $this->testmate->getListTerm());
+    $this->assertEquals(TRUE, $this->testmate->getListTerm());
     $this->assertEquals(['user_admin_people'], $this->testmate->getUserViews());
     $this->assertEquals('[TEST%', $this->testmate->getNodePattern());
     $this->assertEquals('[TEST%', $this->testmate->getTermPattern());

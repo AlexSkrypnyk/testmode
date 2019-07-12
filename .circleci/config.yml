@@ -4,7 +4,7 @@ aliases:
   - &container_config
     working_directory: /app
     docker:
-      - image: integratedexperts/ci-builder
+      - image: amazeeio/php:7.2-cli-drupal
     environment:
       DEPLOY_SSH_FINGERPRINT: *deploy_ssh_fingerprint
 
@@ -15,6 +15,12 @@ jobs:
       - checkout
       - run: .circleci/build.sh
       - run: .circleci/test.sh
+      - run:
+          command: .circleci/process-artifacts.sh
+          when: always
+      - store_test_results:
+          path: /tmp/test_results
+          when: always
       - store_artifacts:
           path: /tmp/artifacts
           when: always

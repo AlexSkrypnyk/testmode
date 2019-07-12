@@ -43,7 +43,7 @@ ssh-add "${DEPLOY_SSH_FILE}"
 git config --global push.default matching
 
 echo "==> Adding remote ${DEPLOY_REMOTE}"
-git remote add deployremote ${DEPLOY_REMOTE}
+git remote add deployremote "${DEPLOY_REMOTE}"
 
 echo "==> Deploying to remote ${DEPLOY_REMOTE}"
 git push --tags --force deployremote

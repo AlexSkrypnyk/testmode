@@ -11,9 +11,9 @@ use Drupal\Core\Url;
 use Drupal\testmate\Testmate;
 
 /**
- * Class ConfigForm.
+ * Class SettingsForm.
  */
-class ConfigForm extends ConfigFormBase {
+class SettingsForm extends ConfigFormBase {
 
   /**
    * Testmate class instance.
