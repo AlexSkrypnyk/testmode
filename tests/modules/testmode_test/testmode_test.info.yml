@@ -1,0 +1,9 @@
+name: Testmode module test
+type: module
+description: 'Support module for Testmode related testing.'
+package: Testing
+core: 8.x
+dependencies:
+  - testmode:testmode
+  - drupal:node
+  - drupal:views

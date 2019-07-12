@@ -1,0 +1,87 @@
+<?php
+
+/**
+ * @file
+ * Test module used for providing hook implementation used in tests.
+ *
+ * Test hooks alter content only if the test mode is enabled ('test_mode'
+ * variable is set).
+ * This module should never be enabled in production.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Url;
+use Drupal\testmode\Testmode;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function testmode_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  // Add cache tag to all views.
+  // Required to invalidate tags when enabling test mode for already cached
+  // views.
+  // Since this module is not for production environment, the views caching
+  // may be reset more often, so using single views tag for all views is
+  // sufficient enough.
+  $view->element['#cache']['tags'][] = Testmode::CACHE_VIEWS;
+
+  $testmode = Testmode::getInstance();
+  if ($testmode->isTestMode()) {
+    if (in_array($view->id(), $testmode->getNodeViews())) {
+      if (!in_array('title', array_keys($query->fields))) {
+        $query->addField('node_field_data', 'title');
+      }
+      $query->addWhere(0, 'node_field_data.title', $testmode->getNodePattern(), 'LIKE');
+      return;
+    }
+
+    if (in_array($view->id(), $testmode->getTermViews())) {
+      if (!in_array('name', array_keys($query->fields))) {
+        $query->addField('taxonomy_term_field_data', 'name');
+      }
+      $query->addWhere(0, 'taxonomy_term_field_data.name', $testmode->getTermPattern(), 'LIKE');
+      return;
+    }
+
+    if (in_array($view->id(), $testmode->getUserViews())) {
+      if (!in_array('mail', array_keys($query->fields))) {
+        $query->addField('users_field_data', 'mail');
+      }
+      $query->addWhere(0, 'users_field_data.mail', $testmode->getUserPattern(), 'LIKE');
+      return;
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function testmode_form_taxonomy_overview_terms_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $testmode = Testmode::getInstance();
+  // Remove terms from the Taxonomy Term Overview page.
+  if ($testmode->isTestMode()) {
+    if ($testmode->getListTerm()) {
+      foreach (Element::children($form['terms']) as $field) {
+        if (!Testmode::matchLike($testmode->getTermPattern(), $form['terms'][$field]['term']['#title'])) {
+          unset($form['terms'][$field]);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_page_bottom().
+ */
+function testmode_page_bottom(array &$page_bottom) {
+  if (\Drupal::currentUser()->hasPermission('administer site configuration') && Testmode::getInstance()->isTestMode()) {
+    $messenger = \Drupal::messenger();
+    $link = Link::fromTextAndUrl(t('Testmode config page'), Url::fromRoute('testmode.admin_settings'))->toString();
+    $messenger->addMessage(t('Test mode is enabled. Most likely your tests did not clear the test mode flag properly. Disable test mode at @link.', ['@link' => $link]), MessengerInterface::TYPE_WARNING);
+  }
+}
