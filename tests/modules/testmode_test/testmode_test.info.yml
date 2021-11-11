@@ -2,7 +2,7 @@ name: Testmode module test
 type: module
 description: 'Support module for Testmode related testing.'
 package: Testing
-core: 8.x
+core_version_requirement: ^8 || ^9
 dependencies:
   - testmode:testmode
   - drupal:node
