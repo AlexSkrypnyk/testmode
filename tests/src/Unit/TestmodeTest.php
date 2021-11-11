@@ -8,6 +8,8 @@ use Drupal\Tests\UnitTestCase;
 /**
  * Class TestmodeTest.
  *
+ * Tests for Testmode module.
+ *
  * @group Testmode
  *
  * @package Drupal\testmode\Tests
@@ -16,6 +18,8 @@ class TestmodeTest extends UnitTestCase {
 
   /**
    * Test for Testmode::matchLike().
+   *
+   * Test for matchLike().
    *
    * @dataProvider providerMatchLike
    */
@@ -120,7 +124,7 @@ class TestmodeTest extends UnitTestCase {
       [
         'a aa
         b
-        
+
         c', ['a aa', 'b', 'c'],
       ],
       // Array as input.

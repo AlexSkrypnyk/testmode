@@ -11,7 +11,7 @@ use Drupal\Core\Url;
 use Drupal\testmode\Testmode;
 
 /**
- * Class SettingsForm.
+ * Settings form for a module.
  */
 class SettingsForm extends ConfigFormBase {
 

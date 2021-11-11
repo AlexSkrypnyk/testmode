@@ -3,6 +3,6 @@ description: Alter existing site content and other configurations when running t
 type: module
 package: Development
 configure: testmode.admin_settings
-core: 8.x
+core_version_requirement: ^8 || ^9
 tags:
   - developer

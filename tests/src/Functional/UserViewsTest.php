@@ -39,26 +39,26 @@ class UserViewsTest extends TestmodeTestBase {
 
     $this->drupalGet('/test-testmode-user');
     $this->drupalGet('/test-testmode-user');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
 
-    $this->assertText('User 1');
-    $this->assertText('User 2');
-    $this->assertText('[TEST] User 3');
+    $this->assertSession()->responseContains('User 1');
+    $this->assertSession()->responseContains('User 2');
+    $this->assertSession()->responseContains('[TEST] User 3');
 
     $this->drupalGet('/test-testmode-user');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
 
     $this->testmode->enableTestMode();
 
     $this->drupalGet('/test-testmode-user');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
 
-    $this->assertNoText('User 1');
-    $this->assertNoText('User 2');
-    $this->assertText('[TEST] User 3');
+    $this->assertSession()->responseNotContains('User 1');
+    $this->assertSession()->responseNotContains('User 2');
+    $this->assertSession()->responseContains('[TEST] User 3');
 
     $this->drupalGet('/test-testmode-user');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
   }
 
   /**
@@ -82,26 +82,26 @@ class UserViewsTest extends TestmodeTestBase {
     $view->save();
 
     $this->drupalGet('/test-testmode-user');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'MISS');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'MISS');
 
-    $this->assertText('User 1');
-    $this->assertText('User 2');
-    $this->assertText('[TEST] User 3');
+    $this->assertSession()->responseContains('User 1');
+    $this->assertSession()->responseContains('User 2');
+    $this->assertSession()->responseContains('[TEST] User 3');
 
     $this->drupalGet('/test-testmode-user');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'HIT');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'HIT');
 
     $this->testmode->enableTestMode();
 
     $this->drupalGet('/test-testmode-user');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'MISS');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'MISS');
 
-    $this->assertNoText('User 1');
-    $this->assertNoText('User 2');
-    $this->assertText('[TEST] User 3');
+    $this->assertSession()->responseNotContains('User 1');
+    $this->assertSession()->responseNotContains('User 2');
+    $this->assertSession()->responseContains('[TEST] User 3');
 
     $this->drupalGet('/test-testmode-user');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'HIT');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'HIT');
   }
 
   /**
@@ -122,26 +122,26 @@ class UserViewsTest extends TestmodeTestBase {
     $this->drupalLoginAdmin();
 
     $this->drupalGet('/admin/people');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
 
-    $this->assertText('User 1');
-    $this->assertText('User 2');
-    $this->assertText('[TEST] User 3');
+    $this->assertSession()->responseContains('User 1');
+    $this->assertSession()->responseContains('User 2');
+    $this->assertSession()->responseContains('[TEST] User 3');
 
     $this->drupalGet('/admin/people');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
 
     $this->testmode->enableTestMode();
 
     $this->drupalGet('/admin/people');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
 
-    $this->assertNoText('User 1');
-    $this->assertNoText('User 2');
-    $this->assertText('[TEST] User 3');
+    $this->assertSession()->responseNotContains('User 1');
+    $this->assertSession()->responseNotContains('User 2');
+    $this->assertSession()->responseContains('[TEST] User 3');
 
     $this->drupalGet('/admin/people');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
   }
 
   /**
