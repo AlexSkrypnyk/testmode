@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 ##
-# Process test artifacts.
+# Run lint checks.
 #
-# This runs only in CircleCI.
-#
+
 set -e
 
 #-------------------------------------------------------------------------------
@@ -13,10 +12,14 @@ set -e
 # Directory where Drupal site will be built.
 BUILD_DIR="${BUILD_DIR:-build}"
 
+# Module name, taken from .info file.
+MODULE="$(basename -s .info.yml -- ./*.info.yml)"
+
 #-------------------------------------------------------------------------------
 
-if [ -d "$(pwd)/${BUILD_DIR}/web/sites/simpletest/browser_output" ]; then
-  echo "==> Copying Simpletest test artifacts"
-  mkdir -p /tmp/artifacts/simpletest
-  cp -Rf "$(pwd)/${BUILD_DIR}/web/sites/simpletest/browser_output/." /tmp/artifacts/simpletest
-fi
+echo "==> Lint code."
+build/vendor/bin/phpcs \
+  -s \
+  --standard=Drupal,DrupalPractice \
+  --extensions=module,php,install,inc,test,info.yml,js \
+  "build/web/modules/${MODULE}"
