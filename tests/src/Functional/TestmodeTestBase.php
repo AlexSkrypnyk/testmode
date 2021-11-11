@@ -14,6 +14,11 @@ abstract class TestmodeTestBase extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = ['testmode', 'testmode_test'];
 
   /**
