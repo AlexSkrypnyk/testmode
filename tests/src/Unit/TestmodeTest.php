@@ -160,6 +160,9 @@ class TestmodeTest extends UnitTestCase {
       [[' a ', 'b'], ' a ' . PHP_EOL . 'b'],
       [[' a ', '', 'b'], ' a ' . PHP_EOL . 'b'],
       [[' a ', ' ', 'b'], ' a ' . PHP_EOL . ' ' . PHP_EOL . 'b'],
+      // String as input.
+      ['', ''],
+      ['a', 'a'],
     ];
   }
 

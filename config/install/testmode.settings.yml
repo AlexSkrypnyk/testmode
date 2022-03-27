@@ -4,7 +4,10 @@ views_term:
   - ''
 views_user:
   - user_admin_people
-pattern_node: '[TEST%'
-pattern_term: '[TEST%'
-pattern_user: '%example%'
+pattern_node:
+  - '[TEST%'
+pattern_term:
+  - '[TEST%'
+pattern_user:
+  - '%example%'
 list_term: true

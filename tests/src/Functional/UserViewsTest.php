@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\testmode\Functional;
 
+use Drupal\testmode\Testmode;
 use Drupal\views\Views;
 
 /**
@@ -29,7 +30,12 @@ class UserViewsTest extends TestmodeTestBase {
    * Test user view without caching.
    */
   public function testUserViewNoCache() {
-    $this->createUsers();
+    $this->createUsers(50);
+
+    $this->testmode->setUserPatterns(Testmode::arrayToMultiline([
+      '%example%',
+      '%otherexample%',
+    ]));
 
     // Login to bypass page caching.
     $this->drupalLogin($this->drupalCreateUser(['access user profiles']));
@@ -44,6 +50,9 @@ class UserViewsTest extends TestmodeTestBase {
     $this->assertSession()->responseContains('User 1');
     $this->assertSession()->responseContains('User 2');
     $this->assertSession()->responseContains('[TEST] User 3');
+    $this->assertSession()->responseContains('[TEST] User 4');
+    $this->assertSession()->responseContains('[OTHERTEST] User 5');
+    $this->assertSession()->responseContains('[OTHERTEST] User 6');
 
     $this->drupalGet('/test-testmode-user');
     $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
@@ -56,6 +65,9 @@ class UserViewsTest extends TestmodeTestBase {
     $this->assertSession()->responseNotContains('User 1');
     $this->assertSession()->responseNotContains('User 2');
     $this->assertSession()->responseContains('[TEST] User 3');
+    $this->assertSession()->responseContains('[TEST] User 4');
+    $this->assertSession()->responseContains('[OTHERTEST] User 5');
+    $this->assertSession()->responseContains('[OTHERTEST] User 6');
 
     $this->drupalGet('/test-testmode-user');
     $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
@@ -65,7 +77,12 @@ class UserViewsTest extends TestmodeTestBase {
    * Test user view with tag-based caching.
    */
   public function testUserViewCacheTag() {
-    $this->createUsers();
+    $this->createUsers(50);
+
+    $this->testmode->setUserPatterns(Testmode::arrayToMultiline([
+      '%example%',
+      '%otherexample%',
+    ]));
 
     // Login to bypass page caching.
     $this->drupalLogin($this->drupalCreateUser(['access user profiles']));
@@ -87,6 +104,9 @@ class UserViewsTest extends TestmodeTestBase {
     $this->assertSession()->responseContains('User 1');
     $this->assertSession()->responseContains('User 2');
     $this->assertSession()->responseContains('[TEST] User 3');
+    $this->assertSession()->responseContains('[TEST] User 4');
+    $this->assertSession()->responseContains('[OTHERTEST] User 5');
+    $this->assertSession()->responseContains('[OTHERTEST] User 6');
 
     $this->drupalGet('/test-testmode-user');
     $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'HIT');
@@ -99,6 +119,9 @@ class UserViewsTest extends TestmodeTestBase {
     $this->assertSession()->responseNotContains('User 1');
     $this->assertSession()->responseNotContains('User 2');
     $this->assertSession()->responseContains('[TEST] User 3');
+    $this->assertSession()->responseContains('[TEST] User 4');
+    $this->assertSession()->responseContains('[OTHERTEST] User 5');
+    $this->assertSession()->responseContains('[OTHERTEST] User 6');
 
     $this->drupalGet('/test-testmode-user');
     $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'HIT');
@@ -108,7 +131,12 @@ class UserViewsTest extends TestmodeTestBase {
    * Test user view for default User page with tag-based caching.
    */
   public function testUserViewContentNoCache() {
-    $this->createUsers();
+    $this->createUsers(50);
+
+    $this->testmode->setUserPatterns(Testmode::arrayToMultiline([
+      '%example%',
+      '%otherexample%',
+    ]));
 
     // Disable Tag caching for this view.
     $view = Views::getView('user_admin_people');
@@ -127,6 +155,9 @@ class UserViewsTest extends TestmodeTestBase {
     $this->assertSession()->responseContains('User 1');
     $this->assertSession()->responseContains('User 2');
     $this->assertSession()->responseContains('[TEST] User 3');
+    $this->assertSession()->responseContains('[TEST] User 4');
+    $this->assertSession()->responseContains('[OTHERTEST] User 5');
+    $this->assertSession()->responseContains('[OTHERTEST] User 6');
 
     $this->drupalGet('/admin/people');
     $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
@@ -139,6 +170,9 @@ class UserViewsTest extends TestmodeTestBase {
     $this->assertSession()->responseNotContains('User 1');
     $this->assertSession()->responseNotContains('User 2');
     $this->assertSession()->responseContains('[TEST] User 3');
+    $this->assertSession()->responseContains('[TEST] User 4');
+    $this->assertSession()->responseContains('[OTHERTEST] User 5');
+    $this->assertSession()->responseContains('[OTHERTEST] User 6');
 
     $this->drupalGet('/admin/people');
     $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
@@ -147,8 +181,8 @@ class UserViewsTest extends TestmodeTestBase {
   /**
    * Helper to create users.
    */
-  protected function createUsers() {
-    for ($i = 0; $i < 2; $i++) {
+  protected function createUsers($count = 0) {
+    for ($i = 0; $i < $count + 2; $i++) {
       $name = sprintf('User %s %s', $i + 1, $this->randomMachineName());
       $email = str_replace(' ', '_', $name) . '@somedomain.com';
       $this->drupalCreateUser([], $name, FALSE, [
@@ -156,8 +190,23 @@ class UserViewsTest extends TestmodeTestBase {
       ]);
     }
 
-    $name = sprintf('[TEST] User %s %s', 3, $this->randomMachineName());
+    $name = sprintf('[TEST] User %s %s', $i - $count + 1, $this->randomMachineName());
     $email = str_replace(' ', '_', $name) . '@example.com';
+    $this->drupalCreateUser([], $name, FALSE, [
+      'mail' => $email,
+    ]);
+    $name = sprintf('[TEST] User %s %s', $i - $count + 2, $this->randomMachineName());
+    $email = str_replace(' ', '_', $name) . '@example.com';
+    $this->drupalCreateUser([], $name, FALSE, [
+      'mail' => $email,
+    ]);
+    $name = sprintf('[OTHERTEST] User %s %s', $i - $count + 3, $this->randomMachineName());
+    $email = str_replace(' ', '_', $name) . '@otherexample.com';
+    $this->drupalCreateUser([], $name, FALSE, [
+      'mail' => $email,
+    ]);
+    $name = sprintf('[OTHERTEST] User %s %s', $i - $count + 4, $this->randomMachineName());
+    $email = str_replace(' ', '_', $name) . '@otherexample.com';
     $this->drupalCreateUser([], $name, FALSE, [
       'mail' => $email,
     ]);

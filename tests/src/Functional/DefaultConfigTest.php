@@ -17,9 +17,9 @@ class DefaultConfigTest extends TestmodeTestBase {
     $this->assertEquals([''], $this->testmode->getTermViews());
     $this->assertEquals(TRUE, $this->testmode->getListTerm());
     $this->assertEquals(['user_admin_people'], $this->testmode->getUserViews());
-    $this->assertEquals('[TEST%', $this->testmode->getNodePattern());
-    $this->assertEquals('[TEST%', $this->testmode->getTermPattern());
-    $this->assertEquals('%example%', $this->testmode->getUserPattern());
+    $this->assertEquals(['[TEST%'], $this->testmode->getNodePatterns());
+    $this->assertEquals(['[TEST%'], $this->testmode->getTermPatterns());
+    $this->assertEquals(['%example%'], $this->testmode->getUserPatterns());
   }
 
 }

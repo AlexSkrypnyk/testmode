@@ -32,26 +32,38 @@ function testmode_views_query_alter(ViewExecutable $view, QueryPluginBase $query
   $testmode = Testmode::getInstance();
   if ($testmode->isTestMode()) {
     if (in_array($view->id(), $testmode->getNodeViews())) {
+      // Add 'title' field to the query if it was not originally provided.
       if (!in_array('title', array_keys($query->fields))) {
         $query->addField('node_field_data', 'title');
       }
-      $query->addWhere(0, 'node_field_data.title', $testmode->getNodePattern(), 'LIKE');
+      $group = $query->setWhereGroup('OR');
+      foreach ($testmode->getNodePatterns() as $pattern) {
+        $query->addWhere($group, 'node_field_data.title', $pattern, 'LIKE');
+      }
       return;
     }
 
     if (in_array($view->id(), $testmode->getTermViews())) {
+      // Add 'name' field to the query if it was not originally provided.
       if (!in_array('name', array_keys($query->fields))) {
         $query->addField('taxonomy_term_field_data', 'name');
       }
-      $query->addWhere(0, 'taxonomy_term_field_data.name', $testmode->getTermPattern(), 'LIKE');
+      $group = $query->setWhereGroup('OR');
+      foreach ($testmode->getTermPatterns() as $pattern) {
+        $query->addWhere($group, 'taxonomy_term_field_data.name', $pattern, 'LIKE');
+      }
       return;
     }
 
     if (in_array($view->id(), $testmode->getUserViews())) {
+      // Add 'mail' field to the query if it was not originally provided.
       if (!in_array('mail', array_keys($query->fields))) {
         $query->addField('users_field_data', 'mail');
       }
-      $query->addWhere(0, 'users_field_data.mail', $testmode->getUserPattern(), 'LIKE');
+      $group = $query->setWhereGroup('OR');
+      foreach ($testmode->getUserPatterns() as $pattern) {
+        $query->addWhere($group, 'users_field_data.mail', $pattern, 'LIKE');
+      }
       return;
     }
   }
@@ -68,8 +80,12 @@ function testmode_query_alter(AlterableInterface $query) {
       $testmode = Testmode::getInstance();
       if ($testmode->isTestMode()) {
         if ($testmode->getListTerm()) {
-          $query->join('taxonomy_term_field_data', 'd', 'd.tid = t.tid');
-          $query->where('d.name LIKE :pattern', [':pattern' => $testmode->getTermPattern()]);
+          $query->join('taxonomy_term_field_data', 'ttfd', 'ttfd.tid = t.tid');
+          $or = $query->orConditionGroup();
+          foreach ($testmode->getTermPatterns() as $pattern) {
+            $or->condition('ttfd.name', $pattern, 'LIKE');
+          }
+          $query->condition($or);
         }
       }
     }

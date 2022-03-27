@@ -6,6 +6,7 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\views\Views;
+use Drupal\testmode\Testmode;
 
 /**
  * Tests the term views.
@@ -40,7 +41,12 @@ class TermViewsTest extends TestmodeTestBase {
    */
   public function testTermViewNoCache() {
     $this->createVocabulary();
-    $this->createTerms();
+    $this->createTerms(50);
+
+    $this->testmode->setTermPatterns(Testmode::arrayToMultiline([
+      '[TEST%',
+      '[OTHERTEST%',
+    ]));
 
     // Login to bypass page caching.
     $this->drupalLogin($this->drupalCreateUser());
@@ -55,6 +61,9 @@ class TermViewsTest extends TestmodeTestBase {
     $this->assertText('Term 1');
     $this->assertText('Term 2');
     $this->assertText('[TEST] Term 3');
+    $this->assertText('[TEST] Term 4');
+    $this->assertText('[OTHERTEST] Term 5');
+    $this->assertText('[OTHERTEST] Term 6');
 
     $this->drupalGet('/test-testmode-term');
     $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
@@ -67,6 +76,9 @@ class TermViewsTest extends TestmodeTestBase {
     $this->assertNoText('Term 1');
     $this->assertNoText('Term 2');
     $this->assertText('[TEST] Term 3');
+    $this->assertText('[TEST] Term 4');
+    $this->assertText('[OTHERTEST] Term 5');
+    $this->assertText('[OTHERTEST] Term 6');
 
     $this->drupalGet('/test-testmode-term');
     $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
@@ -77,7 +89,12 @@ class TermViewsTest extends TestmodeTestBase {
    */
   public function testTermViewCacheTag() {
     $this->createVocabulary();
-    $this->createTerms();
+    $this->createTerms(50);
+
+    $this->testmode->setTermPatterns(Testmode::arrayToMultiline([
+      '[TEST%',
+      '[OTHERTEST%',
+    ]));
 
     // Login to bypass page caching.
     $this->drupalLogin($this->drupalCreateUser());
@@ -99,6 +116,9 @@ class TermViewsTest extends TestmodeTestBase {
     $this->assertText('Term 1');
     $this->assertText('Term 2');
     $this->assertText('[TEST] Term 3');
+    $this->assertText('[TEST] Term 4');
+    $this->assertText('[OTHERTEST] Term 5');
+    $this->assertText('[OTHERTEST] Term 6');
 
     $this->drupalGet('/test-testmode-term');
     $this->assertHeader('X-Drupal-Dynamic-Cache', 'HIT');
@@ -111,6 +131,9 @@ class TermViewsTest extends TestmodeTestBase {
     $this->assertNoText('Term 1');
     $this->assertNoText('Term 2');
     $this->assertText('[TEST] Term 3');
+    $this->assertText('[TEST] Term 4');
+    $this->assertText('[OTHERTEST] Term 5');
+    $this->assertText('[OTHERTEST] Term 6');
 
     $this->drupalGet('/test-testmode-term');
     $this->assertHeader('X-Drupal-Dynamic-Cache', 'HIT');
@@ -125,9 +148,12 @@ class TermViewsTest extends TestmodeTestBase {
     // than a single page to test that filtering correctly applies to a pager.
     $this->createTerms(50);
 
+    $this->testmode->setTermPatterns(Testmode::arrayToMultiline([
+      '[TEST%',
+      '[OTHERTEST%',
+    ]));
     $this->testmode->setTermsList(TRUE);
 
-    // Login to bypass page caching.
     $this->drupalLoginAdmin();
 
     $this->drupalGet('/admin/structure/taxonomy/manage/testmode_tags/overview');
@@ -136,6 +162,9 @@ class TermViewsTest extends TestmodeTestBase {
     $this->assertText('Term 1');
     $this->assertText('Term 2');
     $this->assertText('[TEST] Term 3');
+    $this->assertText('[TEST] Term 4');
+    $this->assertText('[OTHERTEST] Term 5');
+    $this->assertText('[OTHERTEST] Term 6');
 
     $this->drupalGet('/admin/structure/taxonomy/manage/testmode_tags/overview');
     $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
@@ -148,6 +177,9 @@ class TermViewsTest extends TestmodeTestBase {
     $this->assertNoText('Term 1');
     $this->assertNoText('Term 2');
     $this->assertText('[TEST] Term 3');
+    $this->assertText('[TEST] Term 4');
+    $this->assertText('[OTHERTEST] Term 5');
+    $this->assertText('[OTHERTEST] Term 6');
 
     $this->drupalGet('/admin/structure/taxonomy/manage/testmode_tags/overview');
     $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
@@ -177,6 +209,15 @@ class TermViewsTest extends TestmodeTestBase {
 
     $this->createTerm([
       'name' => sprintf('[TEST] Term %s %s', $i - $count + 1, $this->randomMachineName()),
+    ]);
+    $this->createTerm([
+      'name' => sprintf('[TEST] Term %s %s', $i - $count + 2, $this->randomMachineName()),
+    ]);
+    $this->createTerm([
+      'name' => sprintf('[OTHERTEST] Term %s %s', $i - $count + 3, $this->randomMachineName()),
+    ]);
+    $this->createTerm([
+      'name' => sprintf('[OTHERTEST] Term %s %s', $i - $count + 4, $this->randomMachineName()),
     ]);
   }
 
