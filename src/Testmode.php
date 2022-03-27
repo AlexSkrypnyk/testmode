@@ -248,79 +248,85 @@ class Testmode {
   }
 
   /**
-   * Get node pattern.
+   * Get node patterns.
    *
-   * @return string
-   *   Node pattern.
+   * @return array
+   *   Array of node patterns.
    */
-  public function getNodePattern() {
-    return (string) $this->config->get('pattern_node');
+  public function getNodePatterns() {
+    $value = $this->config->get('pattern_node');
+    return is_array($value) ? $value : [];
   }
 
   /**
-   * Set node pattern.
+   * Set node patterns.
    *
-   * @param string $value
-   *   Node pattern.
+   * @param string|array $value
+   *   String delimited by a new line or an array.
    *
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  public function setNodePattern($value) {
-    $this->config->set('pattern_node', trim($value))->save();
+  public function setNodePatterns($value) {
+    $this->config->set('pattern_node', self::multilineToArray($value))->save();
     return $this;
   }
 
   /**
-   * Get term pattern.
+   * Get term patterns.
    *
-   * @return string
-   *   Term pattern.
+   * @return array
+   *   Array of term patterns.
    */
-  public function getTermPattern() {
-    return $this->config->get('pattern_term');
+  public function getTermPatterns() {
+    $value = $this->config->get('pattern_term');
+    return is_array($value) ? $value : [];
   }
 
   /**
-   * Set term pattern.
+   * Set term patterns.
    *
-   * @param string $value
-   *   Term pattern.
+   * @param string|array $value
+   *   String delimited by a new line or an array.
    *
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  public function setTermPattern($value) {
-    $this->config->set('pattern_term', trim($value))->save();
+  public function setTermPatterns($value) {
+    $this->config->set('pattern_term', self::multilineToArray($value))->save();
     return $this;
   }
 
   /**
-   * Get user pattern.
+   * Get user patterns.
    *
-   * @return string
-   *   User pattern.
+   * @return array
+   *   Array of user patterns.
    */
-  public function getUserPattern() {
-    return $this->config->get('pattern_user');
+  public function getUserPatterns() {
+    $value = $this->config->get('pattern_user');
+    return is_array($value) ? $value : [];
   }
 
   /**
-   * Set user pattern.
+   * Set user patterns.
    *
-   * @param string $value
-   *   User pattern.
+   * @param string|array $value
+   *   String delimited by a new line or an array.
    *
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  public function setUserPattern($value) {
-    $this->config->set('pattern_user', trim($value))->save();
+  public function setUserPatterns($value) {
+    $this->config->set('pattern_user', self::multilineToArray($value))->save();
     return $this;
   }
 
   /**
    * Match subject to an MySQL LIKE pattern.
+   *
+   * Not used in this module, but can be used from the alter hook of other
+   * modules.
    *
    * @param string $like_pattern
    *   Patter in MySQL LIKE format.
@@ -360,13 +366,14 @@ class Testmode {
   /**
    * Helper to convert an array to multi-line string value.
    *
-   * @param array $array
+   * @param string|array $array
    *   Array to convert.
    *
    * @return string
    *   String value of the array.
    */
-  public static function arrayToMultiline(array $array) {
+  public static function arrayToMultiline($array) {
+    $array = is_array($array) ? $array : [$array];
     return implode(PHP_EOL, array_filter($array));
   }
 

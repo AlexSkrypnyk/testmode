@@ -23,11 +23,17 @@ testmode.settings:
       label: 'Flag to apply test mode to Terms Overview page'
       type: boolean
     pattern_node:
-      label: 'Pattern for nodes'
-      type: string
+      label: 'List of patterns for nodes'
+      type: sequence
+      sequence:
+        type: string
     pattern_term:
-      label: 'Pattern for terms'
-      type: string
+      label: 'List of patterns for terms'
+      type: sequence
+      sequence:
+        type: string
     pattern_user:
-      label: 'Pattern for user'
-      type: string
+      label: 'List of patterns for user'
+      type: sequence
+      sequence:
+        type: string

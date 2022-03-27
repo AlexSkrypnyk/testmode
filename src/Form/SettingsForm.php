@@ -49,10 +49,14 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    $form['description'] = [
+      '#markup' => $this->t('Test mode is used to alter existing site data so it does not interfere with tests. For example, a list of content would have only content items created during a test.'),
+    ];
+
     $form['mode'] = [
       '#type' => 'radios',
       '#title' => $this->t('Test mode'),
-      '#description' => $this->t('Test mode is used to alter existing site data so it does not interfere with tests. For example, list of content would have only content items created during test.'),
+      '#description' => $this->t('Enable test mode when debugging tests.'),
       '#options' => [1 => $this->t('Enabled'), 0 => $this->t('Disabled')],
       '#default_value' => $this->testmode->isTestMode() ? 1 : 0,
     ];
@@ -60,7 +64,7 @@ class SettingsForm extends ConfigFormBase {
     $form['lists'] = [
       '#type' => 'details',
       '#title' => $this->t('Lists'),
-      '#description' => $this->t('A list of Drupal views to apply the filtering to. One per line.'),
+      '#description' => $this->t('A list of Drupal views to apply the filtering to.'),
       '#collapsible' => TRUE,
       '#open' => TRUE,
     ];
@@ -68,6 +72,7 @@ class SettingsForm extends ConfigFormBase {
     $form['lists']['views_node'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Node'),
+      '#description' => $this->t('A list of node views. One view name per line.'),
       '#rows' => '4',
       '#default_value' => Testmode::arrayToMultiline($this->testmode->getNodeViews()),
     ];
@@ -75,6 +80,7 @@ class SettingsForm extends ConfigFormBase {
     $form['lists']['views_term'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Term'),
+      '#description' => $this->t('A list of terms views. One view name per line.'),
       '#rows' => '4',
       '#default_value' => Testmode::arrayToMultiline($this->testmode->getTermViews()),
     ];
@@ -88,6 +94,7 @@ class SettingsForm extends ConfigFormBase {
     $form['lists']['views_user'] = [
       '#type' => 'textarea',
       '#title' => $this->t('User'),
+      '#description' => $this->t('A list of user views. One view name per line.'),
       '#rows' => '4',
       '#default_value' => Testmode::arrayToMultiline($this->testmode->getUserViews()),
     ];
@@ -109,25 +116,31 @@ class SettingsForm extends ConfigFormBase {
         '@like_doc' => new FormattableMarkup($like_doc, []),
       ]),
       '#collapsible' => TRUE,
-      '#open' => FALSE,
+      '#open' => TRUE ,
     ];
 
     $form['patterns']['pattern_node'] = [
-      '#type' => 'textfield',
+      '#type' => 'textarea',
       '#title' => $this->t('Node title'),
-      '#default_value' => $this->testmode->getNodePattern(),
+      '#description' => $this->t('A list of node patterns. One pattern per line.'),
+      '#rows' => '3',
+      '#default_value' => Testmode::arrayToMultiline($this->testmode->getNodePatterns()),
     ];
 
     $form['patterns']['pattern_term'] = [
-      '#type' => 'textfield',
+      '#type' => 'textarea',
       '#title' => $this->t('Term name'),
-      '#default_value' => $this->testmode->getTermPattern(),
+      '#description' => $this->t('A list of term patterns. One pattern per line.'),
+      '#rows' => '3',
+      '#default_value' => Testmode::arrayToMultiline($this->testmode->getTermPatterns()),
     ];
 
     $form['patterns']['pattern_user'] = [
-      '#type' => 'textfield',
+      '#type' => 'textarea',
       '#title' => $this->t('User mail'),
-      '#default_value' => $this->testmode->getUserPattern(),
+      '#description' => $this->t('A list of user mail patterns. One pattern per line.'),
+      '#rows' => '3',
+      '#default_value' => Testmode::arrayToMultiline($this->testmode->getUserPatterns()),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -143,9 +156,9 @@ class SettingsForm extends ConfigFormBase {
     $this->testmode->setTermViews($form_state->getValue('views_term'));
     $this->testmode->setUserViews($form_state->getValue('views_user'));
     $this->testmode->setTermsList($form_state->getValue('list_term'));
-    $this->testmode->setNodePattern($form_state->getValue('pattern_node'));
-    $this->testmode->setTermPattern($form_state->getValue('pattern_term'));
-    $this->testmode->setUserPattern($form_state->getValue('pattern_user'));
+    $this->testmode->setNodePatterns($form_state->getValue('pattern_node'));
+    $this->testmode->setTermPatterns($form_state->getValue('pattern_term'));
+    $this->testmode->setUserPatterns($form_state->getValue('pattern_user'));
     $this->testmode->toggleTestMode($form_state->getValue('mode'));
   }
 

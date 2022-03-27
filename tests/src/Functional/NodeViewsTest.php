@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\testmode\Functional;
 
+use Drupal\testmode\Testmode;
 use Drupal\views\Views;
 
 /**
@@ -29,7 +30,12 @@ class NodeViewsTest extends TestmodeTestBase {
    * Test node view without caching.
    */
   public function testNodeViewNoCache() {
-    $this->createNodes();
+    $this->createNodes(20);
+
+    $this->testmode->setNodePatterns(Testmode::arrayToMultiline([
+      '[TEST%',
+      '[OTHERTEST%',
+    ]));
 
     // Login to bypass page caching.
     $this->drupalLogin($this->drupalCreateUser());
@@ -44,6 +50,9 @@ class NodeViewsTest extends TestmodeTestBase {
     $this->assertText('Article 1');
     $this->assertText('Article 2');
     $this->assertText('[TEST] Article 3');
+    $this->assertText('[TEST] Article 4');
+    $this->assertText('[OTHERTEST] Article 5');
+    $this->assertText('[OTHERTEST] Article 6');
 
     $this->drupalGet('/test-testmode-node');
     $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
@@ -56,6 +65,9 @@ class NodeViewsTest extends TestmodeTestBase {
     $this->assertNoText('Article 1');
     $this->assertNoText('Article 2');
     $this->assertText('[TEST] Article 3');
+    $this->assertText('[TEST] Article 4');
+    $this->assertText('[OTHERTEST] Article 5');
+    $this->assertText('[OTHERTEST] Article 6');
 
     $this->drupalGet('/test-testmode-node');
     $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
@@ -65,7 +77,12 @@ class NodeViewsTest extends TestmodeTestBase {
    * Test node view with tag-based caching.
    */
   public function testNodeViewCacheTag() {
-    $this->createNodes();
+    $this->createNodes(20);
+
+    $this->testmode->setNodePatterns(Testmode::arrayToMultiline([
+      '[TEST%',
+      '[OTHERTEST%',
+    ]));
 
     // Login to bypass page caching.
     $this->drupalLogin($this->drupalCreateUser());
@@ -87,6 +104,9 @@ class NodeViewsTest extends TestmodeTestBase {
     $this->assertText('Article 1');
     $this->assertText('Article 2');
     $this->assertText('[TEST] Article 3');
+    $this->assertText('[TEST] Article 4');
+    $this->assertText('[OTHERTEST] Article 5');
+    $this->assertText('[OTHERTEST] Article 6');
 
     $this->drupalGet('/test-testmode-node');
     $this->assertHeader('X-Drupal-Dynamic-Cache', 'HIT');
@@ -99,6 +119,9 @@ class NodeViewsTest extends TestmodeTestBase {
     $this->assertNoText('Article 1');
     $this->assertNoText('Article 2');
     $this->assertText('[TEST] Article 3');
+    $this->assertText('[TEST] Article 4');
+    $this->assertText('[OTHERTEST] Article 5');
+    $this->assertText('[OTHERTEST] Article 6');
 
     $this->drupalGet('/test-testmode-node');
     $this->assertHeader('X-Drupal-Dynamic-Cache', 'HIT');
@@ -108,7 +131,12 @@ class NodeViewsTest extends TestmodeTestBase {
    * Test node view for default Content with tag-based caching.
    */
   public function testNodeViewContentNoCache() {
-    $this->createNodes();
+    $this->createNodes(20);
+
+    $this->testmode->setNodePatterns(Testmode::arrayToMultiline([
+      '[TEST%',
+      '[OTHERTEST%',
+    ]));
 
     // Disable Tag caching for this view.
     $view = Views::getView('content');
@@ -127,6 +155,9 @@ class NodeViewsTest extends TestmodeTestBase {
     $this->assertText('Article 1');
     $this->assertText('Article 2');
     $this->assertText('[TEST] Article 3');
+    $this->assertText('[TEST] Article 4');
+    $this->assertText('[OTHERTEST] Article 5');
+    $this->assertText('[OTHERTEST] Article 6');
 
     $this->drupalGet('/admin/content');
     $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
@@ -139,6 +170,9 @@ class NodeViewsTest extends TestmodeTestBase {
     $this->assertNoText('Article 1');
     $this->assertNoText('Article 2');
     $this->assertText('[TEST] Article 3');
+    $this->assertText('[TEST] Article 4');
+    $this->assertText('[OTHERTEST] Article 5');
+    $this->assertText('[OTHERTEST] Article 6');
 
     $this->drupalGet('/admin/content');
     $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
@@ -147,8 +181,8 @@ class NodeViewsTest extends TestmodeTestBase {
   /**
    * Helper to create nodes.
    */
-  protected function createNodes() {
-    for ($i = 0; $i < 2; $i++) {
+  protected function createNodes($count = 0) {
+    for ($i = 0; $i < $count + 2; $i++) {
       $this->drupalCreateNode([
         'type' => 'article',
         'title' => sprintf('Article %s %s', $i + 1, $this->randomMachineName()),
@@ -157,7 +191,19 @@ class NodeViewsTest extends TestmodeTestBase {
 
     $this->drupalCreateNode([
       'type' => 'article',
-      'title' => sprintf('[TEST] Article %s %s', 3, $this->randomMachineName()),
+      'title' => sprintf('[TEST] Article %s %s', $i - $count + 1, $this->randomMachineName()),
+    ]);
+    $this->drupalCreateNode([
+      'type' => 'article',
+      'title' => sprintf('[TEST] Article %s %s', $i - $count + 2, $this->randomMachineName()),
+    ]);
+    $this->drupalCreateNode([
+      'type' => 'article',
+      'title' => sprintf('[OTHERTEST] Article %s %s', $i - $count + 3, $this->randomMachineName()),
+    ]);
+    $this->drupalCreateNode([
+      'type' => 'article',
+      'title' => sprintf('[OTHERTEST] Article %s %s', $i - $count + 4, $this->randomMachineName()),
     ]);
   }
 
