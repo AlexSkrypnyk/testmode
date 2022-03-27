@@ -121,7 +121,9 @@ class TermViewsTest extends TestmodeTestBase {
    */
   public function testTermOverview() {
     $this->createVocabulary();
-    $this->createTerms();
+    // Overview page has a limit of 50 items per page, so creating more terms
+    // than a single page to test that filtering correctly applies to a pager.
+    $this->createTerms(50);
 
     $this->testmode->setTermsList(TRUE);
 
@@ -166,15 +168,15 @@ class TermViewsTest extends TestmodeTestBase {
   /**
    * Helper to create terms.
    */
-  protected function createTerms() {
-    for ($i = 0; $i < 2; $i++) {
+  protected function createTerms($count = 0) {
+    for ($i = 0; $i < $count + 2; $i++) {
       $this->createTerm([
         'name' => sprintf('Term %s %s', $i + 1, $this->randomMachineName()),
       ]);
     }
 
     $this->createTerm([
-      'name' => sprintf('[TEST] Term %s %s', $i + 1, $this->randomMachineName()),
+      'name' => sprintf('[TEST] Term %s %s', $i - $count + 1, $this->randomMachineName()),
     ]);
   }
 
