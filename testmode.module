@@ -9,10 +9,9 @@
  * This module should never be enabled in production.
  */
 
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\testmode\Testmode;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
@@ -59,16 +58,18 @@ function testmode_views_query_alter(ViewExecutable $view, QueryPluginBase $query
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_query_alter().
  */
-function testmode_form_taxonomy_overview_terms_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $testmode = Testmode::getInstance();
-  // Remove terms from the Taxonomy Term Overview page.
-  if ($testmode->isTestMode()) {
-    if ($testmode->getListTerm()) {
-      foreach (Element::children($form['terms']) as $field) {
-        if (!Testmode::matchLike($testmode->getTermPattern(), $form['terms'][$field]['term']['#title'])) {
-          unset($form['terms'][$field]);
+function testmode_query_alter(AlterableInterface $query) {
+  // Filter term query used for Taxonomy Term Overview page.
+  if ($query->hasTag('taxonomy_term_access')) {
+    $route = Drupal::routeMatch()->getRouteName();
+    if ($route == 'entity.taxonomy_vocabulary.overview_form') {
+      $testmode = Testmode::getInstance();
+      if ($testmode->isTestMode()) {
+        if ($testmode->getListTerm()) {
+          $query->join('taxonomy_term_field_data', 'd', 'd.tid = t.tid');
+          $query->where('d.name LIKE :pattern', [':pattern' => $testmode->getTermPattern()]);
         }
       }
     }
