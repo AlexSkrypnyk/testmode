@@ -6,12 +6,12 @@
 # Allows to use the latest Drupal core as well as specified versions (for
 # testing backward compatibility).
 #
-# - builds Drupal site codebase with current module and it's dependencies.
-# - installs Drupal using SQLite database.
-# - starts in-built PHP-server
-# - enables module
-# - serves site
-# - generates one-time login link
+# - Retrieves the scaffold from drupal-composer/drupal-project or custom scaffold.
+# - Builds Drupal site codebase with current module and it's dependencies.
+# - Installs Drupal using SQLite database.
+# - Starts in-built PHP-server
+# - Enables module
+# - Serves site and generates one-time login link
 #
 # This script will re-build everything from scratch every time it runs.
 
@@ -46,10 +46,10 @@ DRUPAL_PROJECT_SHA="${DRUPAL_PROJECT_SHA:-}"
 # yet (i.e., when major Drupal version is about to be released).
 DRUPAL_PROJECT_REPO="${DRUPAL_PROJECT_REPO:-https://github.com/drupal-composer/drupal-project.git}"
 
-# Drupal profile to use when installing site.
+# Drupal profile to use when installing the site.
 DRUPAL_PROFILE="${DRUPAL_PROFILE:-standard}"
 
-# Module name, taken from .info file.
+# Module name, taken from the .info file.
 MODULE="$(basename -s .info.yml -- ./*.info.yml)"
 
 # Database file path.
@@ -61,7 +61,10 @@ echo
 echo "==> Started build in \"${BUILD_DIR}\" directory."
 echo
 
-echo "==> Validating requirements."
+echo "-------------------------------"
+echo " Validating requirements       "
+echo "-------------------------------"
+
 echo "  > Validating tools."
 ! command -v git > /dev/null && echo "ERROR: Git is required for this script to run." && exit 1
 ! command -v php > /dev/null && echo "ERROR: PHP is required for this script to run." && exit 1
@@ -74,9 +77,12 @@ composer validate --ansi --strict
 # Reset the environment.
 [ -d "${BUILD_DIR}" ] && echo "  > Removing existing ${BUILD_DIR} directory." && chmod -Rf 777 "${BUILD_DIR}" && rm -rf "${BUILD_DIR}"
 
-echo "==> Installing Drupal."
-# Allow installing custom version of Drupal core, but only coupled with
-# drupal-project SHA (required to get correct dependencies).
+echo "-------------------------------"
+echo " Installing Composer packages  "
+echo "-------------------------------"
+
+# Allow installing custom version of Drupal core from drupal-composer/drupal-project,
+# but only coupled with drupal-project SHA (required to get correct dependencies).
 if [ -n "${DRUPAL_VERSION}" ] && [ -n "${DRUPAL_PROJECT_SHA}" ]; then
   echo "  > Initialising Drupal site from the scaffold repo ${DRUPAL_PROJECT_REPO} commit ${DRUPAL_PROJECT_SHA}."
 
@@ -100,7 +106,7 @@ cat <<< "$(jq --indent 4 '.extra["enable-patching"] = true' "${BUILD_DIR}/compos
 cat <<< "$(jq --indent 4 '.extra["phpcodesniffer-search-depth"] = 10' "${BUILD_DIR}/composer.json")" > "${BUILD_DIR}/composer.json"
 
 echo "  > Merging configuration from module's composer.json."
-php -r "echo json_encode(array_replace_recursive(json_decode(file_get_contents('composer.json'), true),json_decode(file_get_contents('${BUILD_DIR}/composer.json'), true)),JSON_PRETTY_PRINT);" > "${BUILD_DIR}/composer2.json" && mv -f "${BUILD_DIR}/composer2.json" "${BUILD_DIR}/composer.json"
+php -r "echo json_encode(array_replace_recursive(json_decode(file_get_contents('composer.json'), true),json_decode(file_get_contents('${BUILD_DIR}/composer.json'), true)),JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);" > "${BUILD_DIR}/composer2.json" && mv -f "${BUILD_DIR}/composer2.json" "${BUILD_DIR}/composer.json"
 
 echo "  > Creating GitHub authentication token if provided."
 [ -n "$GITHUB_TOKEN" ] && echo "{\"github-oauth\": {\"github.com\": \"$GITHUB_TOKEN\"}}" > "${BUILD_DIR}/auth.json"
@@ -108,6 +114,8 @@ echo "  > Creating GitHub authentication token if provided."
 echo "  > Installing dependencies."
 php -d memory_limit=-1 "$(command -v composer)" --working-dir="${BUILD_DIR}" install
 
+# Suggested dependencies allow to install them for testing without requiring
+# them in module's composer.json.
 echo "  > Installing suggested dependencies from module's composer.json."
 composer_suggests=$(cat composer.json | jq -r 'select(.suggest != null) | .suggest | keys[]')
 for composer_suggest in $composer_suggests; do
@@ -122,8 +130,10 @@ php -d memory_limit=-1 "$(command -v composer)" --working-dir="${BUILD_DIR}" req
   palantirnet/drupal-rector
 cp "${BUILD_DIR}/vendor/palantirnet/drupal-rector/rector.php" "${BUILD_DIR}/."
 
+echo "-------------------------------"
+echo " Starting builtin PHP server   "
+echo "-------------------------------"
 
-echo "==> Starting builtin PHP server at http://${WEBSERVER_HOST}:${WEBSERVER_PORT} in $(pwd)/${BUILD_DIR}/web."
 # Stop previously started services.
 killall -9 php > /dev/null 2>&1 || true
 # Start the PHP webserver.
@@ -134,8 +144,12 @@ netstat_opts='-tulpn'; [ "$(uname)" == "Darwin" ] && netstat_opts='-anv' || true
 netstat "${netstat_opts[@]}" | grep -q "${WEBSERVER_PORT}" || (echo "ERROR: Unable to start inbuilt PHP server" && cat /tmp/php.log && exit 1)
 # Check that the server can serve content.
 curl -s -o /dev/null -w "%{http_code}" -L -I "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}" | grep -q 200 || (echo "ERROR: Server is started, but site cannot be served" && exit 1)
+echo "  > Started builtin PHP server at http://${WEBSERVER_HOST}:${WEBSERVER_PORT} in $(pwd)/${BUILD_DIR}/web."
 
-echo "==> Installing Drupal and module."
+echo "-------------------------------"
+echo " Installing Drupal and modules "
+echo "-------------------------------"
+
 echo "  > Installing Drupal into SQLite database ${DB_FILE}."
 "${BUILD_DIR}/vendor/bin/drush" -r "${BUILD_DIR}/web" si "${DRUPAL_PROFILE}" -y --db-url "sqlite://${DB_FILE}" --account-name=admin install_configure_form.enable_update_status_module=NULL install_configure_form.enable_update_status_emails=NULL
 "${BUILD_DIR}/vendor/bin/drush" -r "$(pwd)/${BUILD_DIR}/web" status
@@ -158,11 +172,16 @@ done
 # Visit site to pre-warm caches.
 curl -s "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}" > /dev/null
 
-echo
-echo "==> Site URL:            http://${WEBSERVER_HOST}:${WEBSERVER_PORT}"
-echo -n "==> One-time login link: "
-"${BUILD_DIR}/vendor/bin/drush" -r "${BUILD_DIR}/web" -l "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}" uli --no-browser
+echo "-------------------------------"
+echo " Build finished 🚀🚀🚀"
+echo "-------------------------------"
 
 echo
-echo "==> Build finished 🚀🚀🚀"
+echo "  > Site URL:            http://${WEBSERVER_HOST}:${WEBSERVER_PORT}"
+echo -n "  > One-time login link: "
+"${BUILD_DIR}/vendor/bin/drush" -r "${BUILD_DIR}/web" -l "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}" uli --no-browser
+echo "  > Available commands:"
+echo "    ahoy build  # rebuild"
+echo "    ahoy lint   # check coding standards"
+echo "    ahoy test   # run tests"
 echo
