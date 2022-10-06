@@ -16,7 +16,7 @@ class SettingsFormTest extends TestmodeTestBase {
    *
    * @var array
    */
-  public static $modules = ['testmode'];
+  protected static $modules = ['testmode'];
 
   /**
    * Test that setting form works correctly.
@@ -25,14 +25,14 @@ class SettingsFormTest extends TestmodeTestBase {
     $this->drupalLoginAdmin();
 
     $this->drupalGet('admin/config/development/testmode');
-    $this->assertFieldByName('mode', 0);
-    $this->assertFieldByName('views_node', 'content');
-    $this->assertFieldByName('views_term', '');
-    $this->assertFieldByName('list_term', 1);
-    $this->assertFieldByName('views_user', 'user_admin_people');
-    $this->assertFieldByName('pattern_node', '[TEST%');
-    $this->assertFieldByName('pattern_term', '[TEST%');
-    $this->assertFieldByName('pattern_user', '%example%');
+    $this->assertSession()->fieldValueEquals('mode', 0);
+    $this->assertSession()->fieldValueEquals('views_node', 'content');
+    $this->assertSession()->fieldValueEquals('views_term', '');
+    $this->assertSession()->fieldValueEquals('list_term', 1);
+    $this->assertSession()->fieldValueEquals('views_user', 'user_admin_people');
+    $this->assertSession()->fieldValueEquals('pattern_node', '[TEST%');
+    $this->assertSession()->fieldValueEquals('pattern_term', '[TEST%');
+    $this->assertSession()->fieldValueEquals('pattern_user', '%example%');
   }
 
   /**
@@ -42,16 +42,17 @@ class SettingsFormTest extends TestmodeTestBase {
     $this->drupalLoginAdmin();
 
     $this->drupalGet('admin/config/development/testmode');
-    $this->assertFieldByName('mode', 0);
-    $this->assertFieldByName('views_node', 'content');
-    $this->assertFieldByName('views_term', '');
-    $this->assertFieldByName('list_term', 1);
-    $this->assertFieldByName('views_user', 'user_admin_people');
-    $this->assertFieldByName('pattern_node', '[TEST%');
-    $this->assertFieldByName('pattern_term', '[TEST%');
-    $this->assertFieldByName('pattern_user', '%example%');
+    $this->assertSession()->fieldValueEquals('mode', 0);
+    $this->assertSession()->fieldValueEquals('views_node', 'content');
+    $this->assertSession()->fieldValueEquals('views_term', '');
+    $this->assertSession()->fieldValueEquals('list_term', 1);
+    $this->assertSession()->fieldValueEquals('views_user', 'user_admin_people');
+    $this->assertSession()->fieldValueEquals('pattern_node', '[TEST%');
+    $this->assertSession()->fieldValueEquals('pattern_term', '[TEST%');
+    $this->assertSession()->fieldValueEquals('pattern_user', '%example%');
+    $this->drupalGet('admin/config/development/testmode');
 
-    $this->drupalPostForm('admin/config/development/testmode', [
+    $this->submitForm([
       'views_node' => Testmode::arrayToMultiline(['vn1', 'vn2']),
       'views_term' => Testmode::arrayToMultiline(['vt1', 'vt2']),
       'views_user' => Testmode::arrayToMultiline(['vu1', 'vu2']),
@@ -60,27 +61,27 @@ class SettingsFormTest extends TestmodeTestBase {
       'pattern_user' => Testmode::arrayToMultiline(['pu1', 'pu2']),
     ], 'Save configuration');
 
-    $this->assertFieldByName('views_node', Testmode::arrayToMultiline([
+    $this->assertSession()->fieldValueEquals('views_node', Testmode::arrayToMultiline([
       'vn1',
       'vn2',
     ]));
-    $this->assertFieldByName('views_term', Testmode::arrayToMultiline([
+    $this->assertSession()->fieldValueEquals('views_term', Testmode::arrayToMultiline([
       'vt1',
       'vt2',
     ]));
-    $this->assertFieldByName('views_user', Testmode::arrayToMultiline([
+    $this->assertSession()->fieldValueEquals('views_user', Testmode::arrayToMultiline([
       'vu1',
       'vu2',
     ]));
-    $this->assertFieldByName('pattern_node', Testmode::arrayToMultiline([
+    $this->assertSession()->fieldValueEquals('pattern_node', Testmode::arrayToMultiline([
       'pn1',
       'pn2',
     ]));
-    $this->assertFieldByName('pattern_term', Testmode::arrayToMultiline([
+    $this->assertSession()->fieldValueEquals('pattern_term', Testmode::arrayToMultiline([
       'pt1',
       'pt2',
     ]));
-    $this->assertFieldByName('pattern_user', Testmode::arrayToMultiline([
+    $this->assertSession()->fieldValueEquals('pattern_user', Testmode::arrayToMultiline([
       'pu1',
       'pu2',
     ]));
@@ -94,19 +95,21 @@ class SettingsFormTest extends TestmodeTestBase {
 
     $this->drupalGet('admin/config/development/testmode');
     $this->assertFalse($this->testmode->isTestMode(), 'Test mode is disabled by default');
-    $this->assertNoText('Test mode is enabled');
+    $this->assertSession()->pageTextNotContains('Test mode is enabled');
+    $this->drupalGet('admin/config/development/testmode');
 
-    $this->drupalPostForm('admin/config/development/testmode', [
+    $this->submitForm([
       'mode' => 1,
     ], 'Save configuration');
     $this->assertTrue($this->testmode->isTestMode());
-    $this->assertText('Test mode is enabled');
+    $this->assertSession()->pageTextContains('Test mode is enabled');
+    $this->drupalGet('admin/config/development/testmode');
 
-    $this->drupalPostForm('admin/config/development/testmode', [
+    $this->submitForm([
       'mode' => 0,
     ], 'Save configuration');
     $this->assertFalse($this->testmode->isTestMode(), 'Test mode is disabled by default');
-    $this->assertNoText('Test mode is enabled');
+    $this->assertSession()->pageTextNotContains('Test mode is enabled');
   }
 
 }

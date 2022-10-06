@@ -32,19 +32,19 @@ class ModeTest extends TestmodeTestBase {
 
     $this->drupalGet('admin/config/development/testmode');
     $this->assertFalse($this->testmode->isTestMode(), 'Test mode is disabled by default');
-    $this->assertNoText('Test mode is enabled');
+    $this->assertSession()->pageTextNotContains('Test mode is enabled');
 
     $this->testmode->enableTestMode();
 
     $this->assertTrue($this->testmode->isTestMode());
     $this->drupalGet('admin/config/development/testmode');
-    $this->assertText('Test mode is enabled');
+    $this->assertSession()->pageTextContains('Test mode is enabled');
 
     $this->testmode->disableTestMode();
 
     $this->drupalGet('admin/config/development/testmode');
     $this->assertFalse($this->testmode->isTestMode(), 'Test mode is disabled by default');
-    $this->assertNoText('Test mode is enabled');
+    $this->assertSession()->pageTextNotContains('Test mode is enabled');
   }
 
 }
