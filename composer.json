@@ -24,5 +24,8 @@
     "require": {
         "php": ">=8.0",
         "drupal/core": "^9 || ^10"
+    },
+    "require-dev": {
+        "drevops/behat-steps": "^1"
     }
 }
