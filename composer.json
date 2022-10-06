@@ -13,7 +13,7 @@
     "authors": [
         {
             "name": "Alex Skrypnyk",
-            "homepage": "https://www.drupal.org/u/alex.designworks",
+            "homepage": "https://www.drupal.org/u/alexskrypnyk",
             "role": "Maintainer"
         }
     ],
@@ -21,10 +21,20 @@
         "issues": "https://www.drupal.org/project/issues/testmode",
         "source": "http://cgit.drupalcode.org/testmode"
     },
-    "require": {},
-    "extra": {
-        "branch-alias": {
-            "dev-8.x-1.x": "8.1.x-dev"
+    "require": {
+        "php": ">=8.0",
+        "drupal/core": "^9 || ^10",
+        "drevops/behat-steps": "^1.5",
+        "drupal/drupal-extension": "dev-feature/drupal-10 as 4.2.1-dev"
+    },
+    "repositories": {
+        "drupal/drupal-driver": {
+            "type": "vcs",
+            "url": "https://github.com/drevops/DrupalDriver"
+        },
+        "drupal/drupal-extension": {
+            "type": "vcs",
+            "url": "https://github.com/drevops/drupalextension"
         }
     }
 }

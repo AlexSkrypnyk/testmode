@@ -19,7 +19,7 @@ abstract class TestmodeTestBase extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['testmode', 'testmode_test'];
+  protected static $modules = ['testmode', 'testmode_test'];
 
   /**
    * Instance of the Testmode class.
@@ -31,7 +31,7 @@ abstract class TestmodeTestBase extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE, $modules = ['views_test_config']): void {
     parent::setUp($import_test_views);
 
     if ($import_test_views) {

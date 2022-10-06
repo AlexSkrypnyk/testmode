@@ -7,12 +7,11 @@ aliases:
   - &container_config
     working_directory: ~/project
     docker:
-      - image: circleci/php:7.4-cli-browsers
+      - image: cimg/php:8.1-browsers
 
 job-build: &job-build
   steps:
     - checkout
-    - run: .circleci/install-dependencies.sh
     - run: .circleci/build.sh
     - run: .circleci/lint.sh
     - run: .circleci/test.sh
@@ -25,30 +24,43 @@ job-build: &job-build
         path: /tmp/artifacts
 
 jobs:
-  build-php-7.4:
-    <<: *container_config
-    <<: *job-build
-
   build-php-8.0:
     <<: *container_config
     docker:
-      - image: circleci/php:8.0-cli-browsers
+      - image: cimg/php:8.0-browsers
     <<: *job-build
 
-  build-php-7.4-legacy:
+  build-php-8.1:
     <<: *container_config
-    environment:
-      DRUPAL_VERSION: 9.1.11
-      DRUPAL_PROJECT_SHA: 9.x
+    docker:
+      - image: cimg/php:8.1-browsers
     <<: *job-build
 
   build-php-8.0-legacy:
     <<: *container_config
     docker:
-      - image: circleci/php:8.0-cli-browsers
+      - image: cimg/php:8.0-browsers
     environment:
-      DRUPAL_VERSION: 9.1.11
+      DRUPAL_VERSION: 9.3.22
       DRUPAL_PROJECT_SHA: 9.x
+    <<: *job-build
+
+  build-php-8.1-legacy:
+    <<: *container_config
+    docker:
+      - image: cimg/php:8.1-browsers
+    environment:
+      DRUPAL_VERSION: 9.3.22
+      DRUPAL_PROJECT_SHA: 9.x
+    <<: *job-build
+
+  build-php-8.1-next:
+    <<: *container_config
+    docker:
+      - image: cimg/php:8.1-browsers
+    environment:
+      DRUPAL_VERSION: 10@beta2
+      DRUPAL_PROJECT_SHA: 10.x
     <<: *job-build
 
   deploy:
@@ -66,15 +78,11 @@ workflows:
   version: 2
   main:
     jobs:
-      - build-php-7.4:
-          filters:
-            tags:
-              only: /.*/
       - build-php-8.0:
           filters:
             tags:
               only: /.*/
-      - build-php-7.4-legacy:
+      - build-php-8.1:
           filters:
             tags:
               only: /.*/
@@ -82,15 +90,24 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - build-php-8.1-legacy:
+          filters:
+            tags:
+              only: /.*/
+      - build-php-8.1-next:
+          filters:
+            tags:
+              only: /.*/
       - deploy:
           requires:
-            - build-php-7.4
             - build-php-8.0
-            - build-php-7.4-legacy
+            - build-php-8.1
             - build-php-8.0-legacy
+            - build-php-8.1-legacy
+            - build-php-8.1-next
           filters:
             tags:
               only: /.*/
             branches:
-              # 7.x, 8.x, 7.x-1.x, 8.x-1.x, 7.x-2.x, 8.x-2.x, ci
-              only: /^(?:7|8)\.x(?:\-[0-9]+\.x)?|ci$/
+              # 8.x, 9.x, 10.x, 8.x-1.x, 8.x-1.x, 8.x-2.x, 9.x-2.x, ci
+              only: /^[0-9]+.x(?:\-[0-9]+\.x)?|ci$/

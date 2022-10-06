@@ -17,7 +17,7 @@ class NodeViewsTest extends TestmodeTestBase {
    *
    * @var array
    */
-  public static $modules = ['node', 'views'];
+  protected static $modules = ['node', 'views'];
 
   /**
    * Views used by this test.
@@ -45,32 +45,32 @@ class NodeViewsTest extends TestmodeTestBase {
 
     $this->drupalGet('/test-testmode-node');
     $this->drupalGet('/test-testmode-node');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
 
-    $this->assertText('Article 1');
-    $this->assertText('Article 2');
-    $this->assertText('[TEST] Article 3');
-    $this->assertText('[TEST] Article 4');
-    $this->assertText('[OTHERTEST] Article 5');
-    $this->assertText('[OTHERTEST] Article 6');
+    $this->assertSession()->pageTextContains('Article 1');
+    $this->assertSession()->pageTextContains('Article 2');
+    $this->assertSession()->pageTextContains('[TEST] Article 3');
+    $this->assertSession()->pageTextContains('[TEST] Article 4');
+    $this->assertSession()->pageTextContains('[OTHERTEST] Article 5');
+    $this->assertSession()->pageTextContains('[OTHERTEST] Article 6');
 
     $this->drupalGet('/test-testmode-node');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
 
     $this->testmode->enableTestMode();
 
     $this->drupalGet('/test-testmode-node');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
 
-    $this->assertNoText('Article 1');
-    $this->assertNoText('Article 2');
-    $this->assertText('[TEST] Article 3');
-    $this->assertText('[TEST] Article 4');
-    $this->assertText('[OTHERTEST] Article 5');
-    $this->assertText('[OTHERTEST] Article 6');
+    $this->assertSession()->pageTextNotContains('Article 1');
+    $this->assertSession()->pageTextNotContains('Article 2');
+    $this->assertSession()->pageTextContains('[TEST] Article 3');
+    $this->assertSession()->pageTextContains('[TEST] Article 4');
+    $this->assertSession()->pageTextContains('[OTHERTEST] Article 5');
+    $this->assertSession()->pageTextContains('[OTHERTEST] Article 6');
 
     $this->drupalGet('/test-testmode-node');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
   }
 
   /**
@@ -99,32 +99,32 @@ class NodeViewsTest extends TestmodeTestBase {
     $view->save();
 
     $this->drupalGet('/test-testmode-node');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'MISS');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'MISS');
 
-    $this->assertText('Article 1');
-    $this->assertText('Article 2');
-    $this->assertText('[TEST] Article 3');
-    $this->assertText('[TEST] Article 4');
-    $this->assertText('[OTHERTEST] Article 5');
-    $this->assertText('[OTHERTEST] Article 6');
+    $this->assertSession()->pageTextContains('Article 1');
+    $this->assertSession()->pageTextContains('Article 2');
+    $this->assertSession()->pageTextContains('[TEST] Article 3');
+    $this->assertSession()->pageTextContains('[TEST] Article 4');
+    $this->assertSession()->pageTextContains('[OTHERTEST] Article 5');
+    $this->assertSession()->pageTextContains('[OTHERTEST] Article 6');
 
     $this->drupalGet('/test-testmode-node');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'HIT');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'HIT');
 
     $this->testmode->enableTestMode();
 
     $this->drupalGet('/test-testmode-node');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'MISS');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'MISS');
 
-    $this->assertNoText('Article 1');
-    $this->assertNoText('Article 2');
-    $this->assertText('[TEST] Article 3');
-    $this->assertText('[TEST] Article 4');
-    $this->assertText('[OTHERTEST] Article 5');
-    $this->assertText('[OTHERTEST] Article 6');
+    $this->assertSession()->pageTextNotContains('Article 1');
+    $this->assertSession()->pageTextNotContains('Article 2');
+    $this->assertSession()->pageTextContains('[TEST] Article 3');
+    $this->assertSession()->pageTextContains('[TEST] Article 4');
+    $this->assertSession()->pageTextContains('[OTHERTEST] Article 5');
+    $this->assertSession()->pageTextContains('[OTHERTEST] Article 6');
 
     $this->drupalGet('/test-testmode-node');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'HIT');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'HIT');
   }
 
   /**
@@ -150,32 +150,31 @@ class NodeViewsTest extends TestmodeTestBase {
     $this->drupalLoginAdmin();
 
     $this->drupalGet('/admin/content');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
 
-    $this->assertText('Article 1');
-    $this->assertText('Article 2');
-    $this->assertText('[TEST] Article 3');
-    $this->assertText('[TEST] Article 4');
-    $this->assertText('[OTHERTEST] Article 5');
-    $this->assertText('[OTHERTEST] Article 6');
+    $this->assertSession()->pageTextContains('Article 1');
+    $this->assertSession()->pageTextContains('Article 2');
+    $this->assertSession()->pageTextContains('[TEST] Article 3');
+    $this->assertSession()->pageTextContains('[TEST] Article 4');
+    $this->assertSession()->pageTextContains('[OTHERTEST] Article 5');
+    $this->assertSession()->pageTextContains('[OTHERTEST] Article 6');
 
     $this->drupalGet('/admin/content');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
 
     $this->testmode->enableTestMode();
 
     $this->drupalGet('/admin/content');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
-
-    $this->assertNoText('Article 1');
-    $this->assertNoText('Article 2');
-    $this->assertText('[TEST] Article 3');
-    $this->assertText('[TEST] Article 4');
-    $this->assertText('[OTHERTEST] Article 5');
-    $this->assertText('[OTHERTEST] Article 6');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->pageTextNotContains('Article 1');
+    $this->assertSession()->pageTextNotContains('Article 2');
+    $this->assertSession()->pageTextContains('[TEST] Article 3');
+    $this->assertSession()->pageTextContains('[TEST] Article 4');
+    $this->assertSession()->pageTextContains('[OTHERTEST] Article 5');
+    $this->assertSession()->pageTextContains('[OTHERTEST] Article 6');
 
     $this->drupalGet('/admin/content');
-    $this->assertHeader('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'UNCACHEABLE');
   }
 
   /**
