@@ -17,7 +17,7 @@ class UserViewsTest extends TestmodeTestBase {
    *
    * @var array
    */
-  public static $modules = ['user', 'views'];
+  protected static $modules = ['user', 'views'];
 
   /**
    * Views used by this test.
