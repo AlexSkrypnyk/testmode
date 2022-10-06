@@ -89,14 +89,21 @@ if [ -n "${DRUPAL_VERSION}" ] && [ -n "${DRUPAL_PROJECT_SHA}" ]; then
   sed_opts=(-i) && [ "$(uname)" == "Darwin" ] && sed_opts=(-i '')
   sed "${sed_opts[@]}" 's|\(.*"drupal\/core"\): "\(.*\)",.*|\1: '"\"$DRUPAL_VERSION\",|" "${BUILD_DIR}/composer.json"
   cat "${BUILD_DIR}/composer.json"
-
-  echo "  > Installing dependencies."
-  php -d memory_limit=-1 "$(command -v composer)" --working-dir="${BUILD_DIR}" install
 else
   echo "  > Initialising Drupal site from the latest scaffold."
   # There are no releases in "drupal-composer/drupal-project", so have to use "@dev".
-  php -d memory_limit=-1 "$(command -v composer)" create-project drupal-composer/drupal-project:@dev "${BUILD_DIR}" --no-interaction
+  php -d memory_limit=-1 "$(command -v composer)" create-project drupal-composer/drupal-project:@dev "${BUILD_DIR}" --no-interaction --no-install
 fi
+
+echo "  > Updating scaffold."
+cat <<< "$(jq --indent 4 '.extra["enable-patching"] = true' "${BUILD_DIR}/composer.json")" > "${BUILD_DIR}/composer.json"
+cat <<< "$(jq --indent 4 '.extra["phpcodesniffer-search-depth"] = 10' "${BUILD_DIR}/composer.json")" > "${BUILD_DIR}/composer.json"
+
+echo "  > Merging configuration from module's composer.json."
+php -r "echo json_encode(array_replace_recursive(json_decode(file_get_contents('composer.json'), true),json_decode(file_get_contents('${BUILD_DIR}/composer.json'), true)),JSON_PRETTY_PRINT);" > "${BUILD_DIR}/composer2.json" && mv -f "${BUILD_DIR}/composer2.json" "${BUILD_DIR}/composer.json"
+
+echo "  > Installing dependencies."
+php -d memory_limit=-1 "$(command -v composer)" --working-dir="${BUILD_DIR}" install
 
 echo "  > Installing suggested dependencies from module's composer.json."
 composer_suggests=$(cat composer.json | jq -r 'select(.suggest != null) | .suggest | keys[]')
@@ -104,24 +111,14 @@ for composer_suggest in $composer_suggests; do
   php -d memory_limit=-1 "$(command -v composer)" --working-dir="${BUILD_DIR}" require "${composer_suggest}"
 done
 
-echo "==> Adjusting codebase."
-echo "  > Updating composer.json with a list of allowed plugins."
-cat <<< "$(jq --indent 4 '.config["allow-plugins"]["dealerdirect/phpcodesniffer-composer-installer"] = true' "${BUILD_DIR}/composer.json")" > "${BUILD_DIR}/composer.json"
-
-echo "  > Installing additional dev dependencies from module's composer.json."
-cat <<< "$(jq --indent 4 -M -s '.[0] * .[1]' composer.json "${BUILD_DIR}/composer.json")" > "${BUILD_DIR}/composer.json"
-php -d memory_limit=-1 "$(command -v composer)" --working-dir="${BUILD_DIR}" update --lock
-
 echo "  > Installing other dev dependencies."
-cat <<< "$(jq --indent 4 '.extra["phpcodesniffer-search-depth"] = 10' "${BUILD_DIR}/composer.json")" > "${BUILD_DIR}/composer.json"
 php -d memory_limit=-1 "$(command -v composer)" --working-dir="${BUILD_DIR}" require --dev \
   dealerdirect/phpcodesniffer-composer-installer \
   phpspec/prophecy-phpunit:^2 \
   mglaman/drupal-check \
   palantirnet/drupal-rector
 cp "${BUILD_DIR}/vendor/palantirnet/drupal-rector/rector.php" "${BUILD_DIR}/."
-# Fix rector config from https://www.drupal.org/files/issues/2022-08-02/3269329-14.patch
-curl https://www.drupal.org/files/issues/2022-08-02/3269329-14.patch | patch -l "${BUILD_DIR}/rector.php" || true
+
 
 echo "==> Starting builtin PHP server at http://${WEBSERVER_HOST}:${WEBSERVER_PORT} in $(pwd)/${BUILD_DIR}/web."
 # Stop previously started services.
