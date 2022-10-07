@@ -112,7 +112,7 @@ echo "  > Creating GitHub authentication token if provided."
 [ -n "$GITHUB_TOKEN" ] && composer config --global --auth github-oauth.github.com "$GITHUB_TOKEN" && echo "Token: " && composer config --global --auth github-oauth.github.com
 
 echo "  > Installing dependencies."
-php -d memory_limit=-1 "$(command -v composer)" --working-dir="${BUILD_DIR}" install
+php -d memory_limit=-1 "$(command -v composer)" --working-dir="${BUILD_DIR}" -vvvv install
 
 # Suggested dependencies allow to install them for testing without requiring
 # them in module's composer.json.
