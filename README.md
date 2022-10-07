@@ -1,6 +1,5 @@
 # Testmode 
-Drupal 8 module used to alter existing site content and other
-configurations when running tests.
+Drupal module used to alter existing site content and other configurations when running tests.
 
 [![CircleCI](https://circleci.com/gh/integratedexperts/testmode.svg?style=shield)](https://circleci.com/gh/integratedexperts/testmode)
 
