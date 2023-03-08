@@ -1,7 +1,7 @@
 # Testmode 
 Drupal module used to alter existing site content and other configurations when running tests.
 
-[![CircleCI](https://circleci.com/gh/integratedexperts/testmode.svg?style=shield)](https://circleci.com/gh/integratedexperts/testmode)
+[![CircleCI](https://circleci.com/gh/AlexSkrypnyk/testmode.svg?style=shield)](https://circleci.com/gh/AlexSkrypnyk/testmode)
 
 This is a module to support testing, so it is not expected to be used in 
 production (although, it adheres to Drupal coding standards and has good test 
