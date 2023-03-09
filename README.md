@@ -2,6 +2,8 @@
 This Drupal module is designed to modify existing site content and configurations while running tests.
 
 [![CircleCI](https://circleci.com/gh/AlexSkrypnyk/testmode.svg?style=shield)](https://circleci.com/gh/AlexSkrypnyk/testmode)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/AlexSkrypnyk/testmode)
+![LICENSE](https://img.shields.io/github/license/AlexSkrypnyk/testmode)
 
 This is a module to support testing, so it is not expected to be used in 
 production (although, it adheres to Drupal coding standards and has good test 
