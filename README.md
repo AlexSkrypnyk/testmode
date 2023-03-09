@@ -1,5 +1,5 @@
 # Testmode 
-Drupal module used to alter existing site content and other configurations when running tests.
+This Drupal module is designed to modify existing site content and configurations while running tests.
 
 [![CircleCI](https://circleci.com/gh/AlexSkrypnyk/testmode.svg?style=shield)](https://circleci.com/gh/AlexSkrypnyk/testmode)
 
