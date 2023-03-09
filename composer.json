@@ -1,6 +1,7 @@
 {
     "name": "drupal/testmode",
     "description": "Alter existing site content and other configurations when running tests.",
+    "license": "GPL-2.0-or-later",
     "type": "drupal-module",
     "keywords": [
         "Drupal",
@@ -9,12 +10,10 @@
         "Behat"
     ],
     "homepage": "http://drupal.org/project/testmode",
-    "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Alex Skrypnyk",
-            "homepage": "https://www.drupal.org/u/alexskrypnyk",
-            "role": "Maintainer"
+            "email": "alex@drevops.com"
         }
     ],
     "support": {
