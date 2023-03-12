@@ -13,14 +13,21 @@ use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Url;
+use Drupal\search_api\Plugin\views\query\SearchApiQuery;
 use Drupal\testmode\Testmode;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\Plugin\views\query\Sql;
 use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_views_query_alter().
  */
-function testmode_views_query_alter(ViewExecutable $view, Sql $query) {
+function testmode_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  // Don't alter any non-sql views queries.
+  if (!$query instanceof Sql && !$query instanceof SearchApiQuery) {
+    return;
+  }
+
   // Add cache tag to all views.
   // Required to invalidate tags when enabling test mode for already cached
   // views.
@@ -32,13 +39,19 @@ function testmode_views_query_alter(ViewExecutable $view, Sql $query) {
   $testmode = Testmode::getInstance();
   if ($testmode->isTestMode()) {
     if (in_array($view->id(), $testmode->getNodeViews())) {
-      // Add 'title' field to the query if it was not originally provided.
-      if (!in_array('title', array_keys($query->fields))) {
-        $query->addField('node_field_data', 'title');
+      $operator = '=';
+      $field = 'title';
+      if ($query instanceof Sql) {
+        // Add 'title' field to the query if it was not originally provided.
+        if (!in_array('title', array_keys($query->fields))) {
+          $query->addField('node_field_data', $field);
+        }
+        $field = 'node_field_data.' . $field;
+        $operator = 'LIKE';
       }
       $group = $query->setWhereGroup('OR');
       foreach ($testmode->getNodePatterns() as $pattern) {
-        $query->addWhere($group, 'node_field_data.title', $pattern, 'LIKE');
+        $query->addWhere($group, $field, $pattern, $operator);
       }
       return;
     }

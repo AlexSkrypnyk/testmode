@@ -20,6 +20,9 @@
         "drevops/behat-steps": "^1.5",
         "drupal/drupal-extension": "dev-feature/drupal-10 as 4.2.1-dev"
     },
+    "suggest": {
+        "drupal/search_api": "^1.25"
+    },
     "repositories": {
         "drupal/drupal-driver": {
             "type": "vcs",
