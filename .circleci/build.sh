@@ -17,7 +17,8 @@
 
 # shellcheck disable=SC2015,SC2094,SC2002
 
-set -e
+set -eu
+[ -n "${DEBUG:-}" ] && set -x
 
 #-------------------------------------------------------------------------------
 # Variables (passed from environment; provided for reference only).
@@ -83,7 +84,7 @@ echo "-------------------------------"
 
 # Allow installing custom version of Drupal core from drupal-composer/drupal-project,
 # but only coupled with drupal-project SHA (required to get correct dependencies).
-if [ -n "${DRUPAL_VERSION}" ] && [ -n "${DRUPAL_PROJECT_SHA}" ]; then
+if [ -n "${DRUPAL_VERSION:-}" ] && [ -n "${DRUPAL_PROJECT_SHA:-}" ]; then
   echo "  > Initialising Drupal site from the scaffold repo ${DRUPAL_PROJECT_REPO} commit ${DRUPAL_PROJECT_SHA}."
 
   # Clone Drupal core at the specific commit SHA.
@@ -109,7 +110,7 @@ echo "  > Merging configuration from module's composer.json."
 php -r "echo json_encode(array_replace_recursive(json_decode(file_get_contents('composer.json'), true),json_decode(file_get_contents('${BUILD_DIR}/composer.json'), true)),JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);" > "${BUILD_DIR}/composer2.json" && mv -f "${BUILD_DIR}/composer2.json" "${BUILD_DIR}/composer.json"
 
 echo "  > Creating GitHub authentication token if provided."
-[ -n "$GITHUB_TOKEN" ] && composer config --global github-oauth.github.com "$GITHUB_TOKEN" && echo "Token: " && composer config --global github-oauth.github.com
+[ -n "${GITHUB_TOKEN:-}" ] && composer config --global github-oauth.github.com "$GITHUB_TOKEN" && echo "Token: " && composer config --global github-oauth.github.com
 
 echo "  > Installing dependencies."
 php -d memory_limit=-1 "$(command -v composer)" --working-dir="${BUILD_DIR}" install
@@ -123,13 +124,23 @@ for composer_suggest in $composer_suggests; do
 done
 
 echo "  > Installing other dev dependencies."
+php -d memory_limit=-1 "$(command -v composer)" --working-dir="${BUILD_DIR}" config allow-plugins.phpstan/extension-installer true
 php -d memory_limit=-1 "$(command -v composer)" --working-dir="${BUILD_DIR}" require --dev \
   dealerdirect/phpcodesniffer-composer-installer \
   phpspec/prophecy-phpunit:^2 \
-  mglaman/drupal-check \
-  rector/rector:0.15.13 \
-  palantirnet/drupal-rector
-cp "${BUILD_DIR}/vendor/palantirnet/drupal-rector/rector.php" "${BUILD_DIR}/."
+  phpstan/extension-installer \
+  phpcompatibility/php-compatibility \
+  phpmd/phpmd \
+  mglaman/phpstan-drupal:^1.2 \
+  palantirnet/drupal-rector:^0.18 \
+  friendsoftwig/twigcs:^6.2
+
+echo "  > Copying tools configuration files."
+cp phpcs.xml "${BUILD_DIR}/phpcs.xml"
+cp phpstan.neon "${BUILD_DIR}/phpstan.neon"
+cp phpmd.xml "${BUILD_DIR}/phpmd.xml"
+cp rector.php "${BUILD_DIR}/."
+cp .twig_cs.php "${BUILD_DIR}/."
 
 echo "-------------------------------"
 echo " Starting builtin PHP server   "
@@ -156,9 +167,8 @@ echo "  > Installing Drupal into SQLite database ${DB_FILE}."
 "${BUILD_DIR}/vendor/bin/drush" -r "$(pwd)/${BUILD_DIR}/web" status
 
 echo "  > Symlinking module code."
-rm -rf "${BUILD_DIR}/web/modules/${MODULE}"/* > /dev/null
-mkdir -p "${BUILD_DIR}/web/modules/${MODULE}"
-ln -s "$(pwd)"/* "${BUILD_DIR}/web/modules/${MODULE}" && rm "${BUILD_DIR}/web/modules/${MODULE}/${BUILD_DIR}"
+rm -rf "${BUILD_DIR}/web/modules/custom" > /dev/null && mkdir -p "${BUILD_DIR}/web/modules/custom/${MODULE}"
+ln -s "$(pwd)"/* "${BUILD_DIR}/web/modules/custom/${MODULE}" && rm "${BUILD_DIR}/web/modules/custom/${MODULE}/${BUILD_DIR}"
 
 echo "  > Enabling module ${MODULE}."
 "${BUILD_DIR}/vendor/bin/drush" -r "${BUILD_DIR}/web" pm:enable "${MODULE}" -y
@@ -173,14 +183,15 @@ done
 # Visit site to pre-warm caches.
 curl -s "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}" > /dev/null
 
+echo
 echo "-------------------------------"
 echo " Build finished 🚀🚀🚀"
 echo "-------------------------------"
-
 echo
 echo "  > Site URL:            http://${WEBSERVER_HOST}:${WEBSERVER_PORT}"
 echo -n "  > One-time login link: "
 "${BUILD_DIR}/vendor/bin/drush" -r "${BUILD_DIR}/web" -l "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}" uli --no-browser
+echo
 echo "  > Available commands:"
 echo "    ahoy build  # rebuild"
 echo "    ahoy lint   # check code standards"
