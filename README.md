@@ -29,7 +29,7 @@ coverage).
 
     composer require drupal/testmode
 
-## Usage / Use case
+## Use case
 Running a Behat test on the site with existing content may result in
 FALSE positives because of the live content being mixed with test content.
 
