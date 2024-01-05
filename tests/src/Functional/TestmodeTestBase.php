@@ -8,6 +8,8 @@ use Drupal\views\Tests\ViewTestData;
 
 /**
  * Base class for all Testmode Views tests.
+ *
+ * @SuppressWarnings(PHPMD.StaticAccess)
  */
 abstract class TestmodeTestBase extends ViewTestBase {
 
@@ -18,6 +20,8 @@ abstract class TestmodeTestBase extends ViewTestBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @var string[]
    */
   protected static $modules = ['testmode', 'testmode_test'];
 
@@ -29,7 +33,15 @@ abstract class TestmodeTestBase extends ViewTestBase {
   protected $testmode;
 
   /**
-   * {@inheritdoc}
+   * Setup for test.
+   *
+   * @param bool $import_test_views
+   *   Import test view.
+   * @param string[] $modules
+   *   List module.
+   *
+   * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+   * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
    */
   protected function setUp($import_test_views = TRUE, $modules = ['views_test_config']): void {
     parent::setUp($import_test_views);
@@ -46,7 +58,7 @@ abstract class TestmodeTestBase extends ViewTestBase {
   /**
    * Helper to login as Admin user.
    */
-  protected function drupalLoginAdmin() {
+  protected function drupalLoginAdmin(): void {
     $user = $this->createUser([], NULL, TRUE);
     $this->drupalLogin($user);
   }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\Tests\testmode\Functional;
 
 use Drupal\search_api\Entity\Index;
@@ -19,21 +21,21 @@ class SearchApiViewsTest extends TestmodeTestBase {
   /**
    * Modules to enable.
    *
-   * @var array
+   * @var string[]
    */
   protected static $modules = ['node', 'views', 'search_api'];
 
   /**
    * Views used by this test.
    *
-   * @var array
+   * @var string[]
    */
   public static $testViews = ['test_testmode_searchapi'];
 
   /**
    * Test search view.
    */
-  public function testSearchViewNoCache() {
+  public function testSearchViewNoCache(): void {
     $this->createNodes(20);
 
     \Drupal::getContainer()
@@ -47,7 +49,10 @@ class SearchApiViewsTest extends TestmodeTestBase {
     ]));
 
     // Login to bypass page caching.
-    $this->drupalLogin($this->drupalCreateUser());
+    $account = $this->drupalCreateUser();
+    if ($account) {
+      $this->drupalLogin($account);
+    }
 
     // Add test view to a list of views.
     $this->testmode->setNodeViews('test_testmode_searchapi');
@@ -82,7 +87,7 @@ class SearchApiViewsTest extends TestmodeTestBase {
   /**
    * Helper to create nodes.
    */
-  protected function createNodes($count = 0) {
+  protected function createNodes(int $count = 0): void {
     for ($i = 0; $i < $count + 2; $i++) {
       $this->drupalCreateNode([
         'type' => 'article',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\Tests\testmode\Functional;
 
 /**
@@ -12,7 +14,7 @@ class ModeTest extends TestmodeTestBase {
   /**
    * Test that enabling and disabling of test mode works.
    */
-  public function testMode() {
+  public function testMode(): void {
     $this->assertFalse($this->testmode->isTestMode(), 'Test mode is disabled by default');
 
     $this->testmode->enableTestMode();
@@ -27,7 +29,7 @@ class ModeTest extends TestmodeTestBase {
   /**
    * Test that enabling test mode shows message for Admin.
    */
-  public function testModeAdminMessage() {
+  public function testModeAdminMessage(): void {
     $this->drupalLoginAdmin();
 
     $this->drupalGet('admin/config/development/testmode');

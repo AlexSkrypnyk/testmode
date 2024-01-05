@@ -9,6 +9,8 @@
  * This module should never be enabled in production.
  */
 
+declare(strict_types = 1);
+
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -22,7 +24,7 @@ use Drupal\views\ViewExecutable;
 /**
  * Implements hook_views_query_alter().
  */
-function testmode_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+function testmode_views_query_alter(ViewExecutable $view, QueryPluginBase $query): void {
   // Don't alter any non-sql views queries.
   if (!$query instanceof Sql && !$query instanceof SearchApiQuery) {
     return;
@@ -58,6 +60,7 @@ function testmode_views_query_alter(ViewExecutable $view, QueryPluginBase $query
 
     if (in_array($view->id(), $testmode->getTermViews())) {
       // Add 'name' field to the query if it was not originally provided.
+      // @phpstan-ignore-next-line
       if (!in_array('name', array_keys($query->fields))) {
         $query->addField('taxonomy_term_field_data', 'name');
       }
@@ -70,6 +73,7 @@ function testmode_views_query_alter(ViewExecutable $view, QueryPluginBase $query
 
     if (in_array($view->id(), $testmode->getUserViews())) {
       // Add 'mail' field to the query if it was not originally provided.
+      // @phpstan-ignore-next-line
       if (!in_array('mail', array_keys($query->fields))) {
         $query->addField('users_field_data', 'mail');
       }
@@ -85,7 +89,7 @@ function testmode_views_query_alter(ViewExecutable $view, QueryPluginBase $query
 /**
  * Implements hook_query_alter().
  */
-function testmode_query_alter(AlterableInterface $query) {
+function testmode_query_alter(AlterableInterface $query): void {
   // Filter term query used for Taxonomy Term Overview page.
   if ($query->hasTag('taxonomy_term_access')) {
     $route = Drupal::routeMatch()->getRouteName();
@@ -108,8 +112,10 @@ function testmode_query_alter(AlterableInterface $query) {
 
 /**
  * Implements hook_page_bottom().
+ *
+ * @phpstan-ignore-next-line
  */
-function testmode_page_bottom(array &$page_bottom) {
+function testmode_page_bottom(array &$page_bottom): void {
   if (\Drupal::currentUser()->hasPermission('administer site configuration') && Testmode::getInstance()->isTestMode()) {
     $messenger = \Drupal::messenger();
     $link = Link::fromTextAndUrl(t('Testmode config page'), Url::fromRoute('testmode.admin_settings'))->toString();

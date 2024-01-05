@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\testmode\Form;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -12,6 +14,8 @@ use Drupal\testmode\Testmode;
 
 /**
  * Settings form for a module.
+ *
+ * @SuppressWarnings(PHPMD.StaticAccess)
  */
 class SettingsForm extends ConfigFormBase {
 
@@ -33,22 +37,33 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'testmode_config_form';
   }
 
   /**
-   * {@inheritdoc}
+   * Get editable config name.
+   *
+   * @return string[]
+   *   Editable config names.
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     // Config is managed by the Testmode class.
     return [];
   }
 
   /**
-   * {@inheritdoc}
+   * Build a form structure.
+   *
+   * @param array<mixed> $form
+   *   Form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state.
+   *
+   * @return array<mixed>
+   *   Form structure.
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['description'] = [
       '#markup' => $this->t('Test mode is used to alter existing site data so it does not interfere with tests. For example, a list of content would have only content items created during a test.'),
     ];
@@ -147,19 +162,24 @@ class SettingsForm extends ConfigFormBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Submit form.
+   *
+   * @param array<mixed> $form
+   *   Form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state.
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
     $this->testmode->setNodeViews($form_state->getValue('views_node'));
     $this->testmode->setTermViews($form_state->getValue('views_term'));
     $this->testmode->setUserViews($form_state->getValue('views_user'));
-    $this->testmode->setTermsList($form_state->getValue('list_term'));
+    $this->testmode->setTermsList((bool) $form_state->getValue('list_term'));
     $this->testmode->setNodePatterns($form_state->getValue('pattern_node'));
     $this->testmode->setTermPatterns($form_state->getValue('pattern_term'));
     $this->testmode->setUserPatterns($form_state->getValue('pattern_user'));
-    $this->testmode->toggleTestMode($form_state->getValue('mode'));
+    $this->testmode->toggleTestMode((bool) $form_state->getValue('mode'));
   }
 
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\Tests\testmode\Functional;
 
 use Drupal\testmode\Testmode;
@@ -15,21 +17,21 @@ class NodeViewsTest extends TestmodeTestBase {
   /**
    * Modules to enable.
    *
-   * @var array
+   * @var string[]
    */
   protected static $modules = ['node', 'views'];
 
   /**
    * Views used by this test.
    *
-   * @var array
+   * @var string[]
    */
   public static $testViews = ['test_testmode_node'];
 
   /**
    * Test node view without caching.
    */
-  public function testNodeViewNoCache() {
+  public function testNodeViewNoCache(): void {
     $this->createNodes(20);
 
     $this->testmode->setNodePatterns(Testmode::arrayToMultiline([
@@ -38,7 +40,10 @@ class NodeViewsTest extends TestmodeTestBase {
     ]));
 
     // Login to bypass page caching.
-    $this->drupalLogin($this->drupalCreateUser());
+    $account = $this->drupalCreateUser();
+    if ($account) {
+      $this->drupalLogin($account);
+    }
 
     // Add test view to a list of views.
     $this->testmode->setNodeViews('test_testmode_node');
@@ -76,7 +81,7 @@ class NodeViewsTest extends TestmodeTestBase {
   /**
    * Test node view with tag-based caching.
    */
-  public function testNodeViewCacheTag() {
+  public function testNodeViewCacheTag(): void {
     $this->createNodes(20);
 
     $this->testmode->setNodePatterns(Testmode::arrayToMultiline([
@@ -85,7 +90,10 @@ class NodeViewsTest extends TestmodeTestBase {
     ]));
 
     // Login to bypass page caching.
-    $this->drupalLogin($this->drupalCreateUser());
+    $account = $this->drupalCreateUser();
+    if ($account) {
+      $this->drupalLogin($account);
+    }
 
     // Add test view to a list of Testmode views.
     $this->testmode->setNodeViews('test_testmode_node');
@@ -130,7 +138,7 @@ class NodeViewsTest extends TestmodeTestBase {
   /**
    * Test node view for default Content with tag-based caching.
    */
-  public function testNodeViewContentNoCache() {
+  public function testNodeViewContentNoCache(): void {
     $this->createNodes(20);
 
     $this->testmode->setNodePatterns(Testmode::arrayToMultiline([
@@ -180,7 +188,7 @@ class NodeViewsTest extends TestmodeTestBase {
   /**
    * Helper to create nodes.
    */
-  protected function createNodes($count = 0) {
+  protected function createNodes(int $count = 0): void {
     for ($i = 0; $i < $count + 2; $i++) {
       $this->drupalCreateNode([
         'type' => 'article',

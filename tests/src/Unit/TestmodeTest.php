@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\Tests\testmode\Unit;
 
 use Drupal\testmode\Testmode;
@@ -23,7 +25,7 @@ class TestmodeTest extends UnitTestCase {
    *
    * @dataProvider providerMatchLike
    */
-  public function testMatchLike($pattern, $subject, $is_match) {
+  public function testMatchLike(string $pattern, string $subject, bool $is_match): void {
     $actual = Testmode::matchLike($pattern, $subject);
     if ($is_match) {
       $this->assertTrue($actual, 'Expected match found');
@@ -35,8 +37,11 @@ class TestmodeTest extends UnitTestCase {
 
   /**
    * Data provider for testMatchLike().
+   *
+   * @return array<array<mixed>>
+   *   Data provider for test.
    */
-  public function providerMatchLike() {
+  public function providerMatchLike(): array {
     return [
       ['', '', TRUE],
       ['t', 't', TRUE],
@@ -93,17 +98,25 @@ class TestmodeTest extends UnitTestCase {
   /**
    * Test for Testmode::multilineToArray().
    *
+   * @param string|array<string> $string
+   *   String or array of string want to test.
+   * @param array<string> $expected
+   *   Expected array string.
+   *
    * @dataProvider providerMultilineToArray
    */
-  public function testMultilineToArray($string, $expected) {
+  public function testMultilineToArray(string|array $string, array $expected): void {
     $actual = Testmode::multilineToArray($string);
     $this->assertEquals($expected, $actual);
   }
 
   /**
    * Data provider for multilineToArray().
+   *
+   * @return array<array<mixed>>
+   *   Provider data for test.
    */
-  public function providerMultilineToArray() {
+  public function providerMultilineToArray(): array {
     return [
       ['', []],
       [' ', []],
@@ -137,17 +150,25 @@ class TestmodeTest extends UnitTestCase {
   /**
    * Test for Testmode::arrayToTextarea().
    *
+   * @param array<string>|string $array
+   *   Array test.
+   * @param string $expected
+   *   String expected.
+   *
    * @dataProvider providerArrayToTextarea
    */
-  public function testArrayToTextarea($array, $expected) {
+  public function testArrayToTextarea(array|string $array, string $expected): void {
     $actual = Testmode::arrayToMultiline($array);
     $this->assertEquals($expected, $actual);
   }
 
   /**
    * Data provider for arrayToTextarea().
+   *
+   * @return array<array<mixed>>
+   *   Provider test data.
    */
-  public function providerArrayToTextarea() {
+  public function providerArrayToTextarea(): array {
     return [
       [[], ''],
       [[''], ''],
