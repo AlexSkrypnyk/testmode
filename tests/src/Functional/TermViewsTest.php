@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\Tests\testmode\Functional;
 
 use Drupal\Core\Language\LanguageInterface;
@@ -25,21 +27,21 @@ class TermViewsTest extends TestmodeTestBase {
   /**
    * Modules to enable.
    *
-   * @var array
+   * @var string[]
    */
   protected static $modules = ['taxonomy', 'views'];
 
   /**
    * Views used by this test.
    *
-   * @var array
+   * @var string[]
    */
   public static $testViews = ['test_testmode_term'];
 
   /**
    * Test term view without caching.
    */
-  public function testTermViewNoCache() {
+  public function testTermViewNoCache(): void {
     $this->createVocabulary();
     $this->createTerms(50);
 
@@ -49,7 +51,10 @@ class TermViewsTest extends TestmodeTestBase {
     ]));
 
     // Login to bypass page caching.
-    $this->drupalLogin($this->drupalCreateUser());
+    $account = $this->drupalCreateUser();
+    if ($account) {
+      $this->drupalLogin($account);
+    }
 
     // Add test view to a list of views.
     $this->testmode->setTermViews('test_testmode_term');
@@ -87,7 +92,7 @@ class TermViewsTest extends TestmodeTestBase {
   /**
    * Test term view with tag-based caching.
    */
-  public function testTermViewCacheTag() {
+  public function testTermViewCacheTag(): void {
     $this->createVocabulary();
     $this->createTerms(50);
 
@@ -97,7 +102,10 @@ class TermViewsTest extends TestmodeTestBase {
     ]));
 
     // Login to bypass page caching.
-    $this->drupalLogin($this->drupalCreateUser());
+    $account = $this->drupalCreateUser();
+    if ($account) {
+      $this->drupalLogin($account);
+    }
 
     // Add test view to a list of Testmode views.
     $this->testmode->setTermViews('test_testmode_term');
@@ -142,7 +150,7 @@ class TermViewsTest extends TestmodeTestBase {
   /**
    * Test default Term Overview page with tag-based caching.
    */
-  public function testTermOverview() {
+  public function testTermOverview(): void {
     $this->createVocabulary();
     // Overview page has a limit of 50 items per page, so creating more terms
     // than a single page to test that filtering correctly applies to a pager.
@@ -188,7 +196,7 @@ class TermViewsTest extends TestmodeTestBase {
   /**
    * Helper to create vocabulary.
    */
-  protected function createVocabulary() {
+  protected function createVocabulary(): void {
     // Create the vocabulary for the tag field.
     $this->vocabulary = Vocabulary::create([
       'name' => 'Testmode tags',
@@ -200,7 +208,7 @@ class TermViewsTest extends TestmodeTestBase {
   /**
    * Helper to create terms.
    */
-  protected function createTerms($count = 0) {
+  protected function createTerms(int $count = 0): void {
     for ($i = 0; $i < $count + 2; $i++) {
       $this->createTerm([
         'name' => sprintf('Term %s %s', $i + 1, $this->randomMachineName()),
@@ -224,7 +232,7 @@ class TermViewsTest extends TestmodeTestBase {
   /**
    * Creates and returns a taxonomy term.
    *
-   * @param array $settings
+   * @param array{"name"?: string, "description"?: string, "format"?: string, "vid"?: string, "langcode"?: string} $settings
    *   (optional) An array of values to override the following default
    *   properties of the term:
    *   - name: A random string.
@@ -236,8 +244,10 @@ class TermViewsTest extends TestmodeTestBase {
    *
    * @return \Drupal\taxonomy\Entity\Term
    *   The created taxonomy term.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  protected function createTerm(array $settings = []) {
+  protected function createTerm(array $settings = []): Term {
     $filter_formats = filter_formats();
     $format = array_pop($filter_formats);
     $settings += [

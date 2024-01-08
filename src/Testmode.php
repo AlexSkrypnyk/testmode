@@ -1,8 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\testmode;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Config\Config;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\State\StateInterface;
 
 /**
  * Class Testmode.
@@ -10,6 +15,8 @@ use Drupal\Core\Cache\Cache;
  * Class to handle all module operations.
  *
  * @package Drupal\testmode
+ *
+ * @SuppressWarnings(PHPMD.StaticAccess)
  */
 class Testmode {
 
@@ -23,28 +30,28 @@ class Testmode {
    *
    * @var \Drupal\testmode\Testmode
    */
-  protected static $instance = NULL;
+  protected static ?Testmode $instance = NULL;
 
   /**
    * Drupal config instance.
    *
    * @var \Drupal\Core\Config\Config
    */
-  protected $config;
+  protected Config $config;
 
   /**
    * Drupal state instance.
    *
    * @var \Drupal\Core\State\StateInterface
    */
-  protected $state;
+  protected StateInterface $state;
 
   /**
    * Testmode constructor.
    */
-  public function __construct() {
-    $this->config = \Drupal::configFactory()->getEditable('testmode.settings');
-    $this->state = \Drupal::state();
+  public function __construct(ConfigFactoryInterface $configFactory, StateInterface $state) {
+    $this->config = $configFactory->getEditable('testmode.settings');
+    $this->state = $state;
   }
 
   /**
@@ -53,9 +60,9 @@ class Testmode {
    * @return \Drupal\testmode\Testmode
    *   Instance of the Testmode class.
    */
-  public static function getInstance() {
+  public static function getInstance(): Testmode {
     if (!self::$instance) {
-      self::$instance = new self();
+      self::$instance = new self(\Drupal::configFactory(), \Drupal::state());
     }
 
     return self::$instance;
@@ -67,7 +74,7 @@ class Testmode {
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  public function enableTestMode() {
+  public function enableTestMode(): Testmode {
     if (!$this->isTestMode()) {
       $this->setMode(TRUE);
       $this->invalidateCahes();
@@ -81,7 +88,7 @@ class Testmode {
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  public function disableTestMode() {
+  public function disableTestMode(): Testmode {
     if ($this->isTestMode()) {
       $this->setMode(FALSE);
       $this->invalidateCahes();
@@ -98,13 +105,9 @@ class Testmode {
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  public function toggleTestMode($enable) {
-    if ($enable) {
-      $this->enableTestMode();
-    }
-    else {
-      $this->disableTestMode();
-    }
+  public function toggleTestMode(bool $enable): Testmode {
+    $enable ? $this->enableTestMode() : $this->disableTestMode();
+
     return $this;
   }
 
@@ -114,7 +117,7 @@ class Testmode {
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  public function invalidateCahes() {
+  public function invalidateCahes(): Testmode {
     Cache::invalidateTags([self::CACHE_VIEWS]);
     return $this;
   }
@@ -125,7 +128,7 @@ class Testmode {
    * @return bool
    *   TRUE if test mode is enabled, FALSE otherwise.
    */
-  public function isTestMode() {
+  public function isTestMode(): bool {
     return (bool) $this->state->get('testmode.enabled');
   }
 
@@ -138,23 +141,19 @@ class Testmode {
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  protected function setMode($value) {
-    if ($value) {
-      $this->state->set('testmode.enabled', TRUE);
-    }
-    else {
-      $this->state->delete('testmode.enabled');
-    }
+  protected function setMode(bool $value): Testmode {
+    $value ? $this->state->set('testmode.enabled', TRUE) : $this->state->delete('testmode.enabled');
+
     return $this;
   }
 
   /**
    * Get node views machine names.
    *
-   * @return array
+   * @return string[]
    *   Array of node views machine names.
    */
-  public function getNodeViews() {
+  public function getNodeViews(): array {
     $value = $this->config->get('views_node');
     return is_array($value) ? $value : [];
   }
@@ -162,13 +161,13 @@ class Testmode {
   /**
    * Set node views machine names.
    *
-   * @param string|array $value
+   * @param string[]|string $value
    *   String delimited by a new line or an array.
    *
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  public function setNodeViews($value) {
+  public function setNodeViews(array|string $value): Testmode {
     $this->config->set('views_node', self::multilineToArray($value))->save();
     return $this;
   }
@@ -176,10 +175,10 @@ class Testmode {
   /**
    * Get term views machine names.
    *
-   * @return array
+   * @return string[]
    *   Array of term views machine names.
    */
-  public function getTermViews() {
+  public function getTermViews(): array {
     $value = $this->config->get('views_term');
     return is_array($value) ? $value : [];
   }
@@ -187,13 +186,13 @@ class Testmode {
   /**
    * Set term views machine names.
    *
-   * @param string|array $value
+   * @param string[]|string $value
    *   String delimited by a new line or an array.
    *
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  public function setTermViews($value) {
+  public function setTermViews(array|string $value): Testmode {
     $this->config->set('views_term', self::multilineToArray($value))->save();
     return $this;
   }
@@ -204,7 +203,7 @@ class Testmode {
    * @return bool
    *   TRUE if the flag is set, FALSE otherwise.
    */
-  public function getListTerm() {
+  public function getListTerm(): bool {
     return (bool) $this->config->get('list_term');
   }
 
@@ -217,18 +216,18 @@ class Testmode {
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  public function setTermsList($value) {
-    $this->config->set('list_term', (bool) $value)->save();
+  public function setTermsList(bool $value): Testmode {
+    $this->config->set('list_term', $value)->save();
     return $this;
   }
 
   /**
    * Get user views machine names.
    *
-   * @return array
+   * @return string[]
    *   Array of user views machine names.
    */
-  public function getUserViews() {
+  public function getUserViews(): array {
     $value = $this->config->get('views_user');
     return is_array($value) ? $value : [];
   }
@@ -236,13 +235,13 @@ class Testmode {
   /**
    * Set user views machine names.
    *
-   * @param string|array $value
+   * @param string[]|string $value
    *   String delimited by a new line or an array.
    *
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  public function setUserViews($value) {
+  public function setUserViews(array|string $value): Testmode {
     $this->config->set('views_user', self::multilineToArray($value))->save();
     return $this;
   }
@@ -250,10 +249,10 @@ class Testmode {
   /**
    * Get node patterns.
    *
-   * @return array
+   * @return string[]
    *   Array of node patterns.
    */
-  public function getNodePatterns() {
+  public function getNodePatterns(): array {
     $value = $this->config->get('pattern_node');
     return is_array($value) ? $value : [];
   }
@@ -261,13 +260,13 @@ class Testmode {
   /**
    * Set node patterns.
    *
-   * @param string|array $value
+   * @param string[]|string $value
    *   String delimited by a new line or an array.
    *
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  public function setNodePatterns($value) {
+  public function setNodePatterns(array|string $value): Testmode {
     $this->config->set('pattern_node', self::multilineToArray($value))->save();
     return $this;
   }
@@ -275,10 +274,10 @@ class Testmode {
   /**
    * Get term patterns.
    *
-   * @return array
+   * @return string[]
    *   Array of term patterns.
    */
-  public function getTermPatterns() {
+  public function getTermPatterns(): array {
     $value = $this->config->get('pattern_term');
     return is_array($value) ? $value : [];
   }
@@ -286,13 +285,13 @@ class Testmode {
   /**
    * Set term patterns.
    *
-   * @param string|array $value
+   * @param string[]|string $value
    *   String delimited by a new line or an array.
    *
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  public function setTermPatterns($value) {
+  public function setTermPatterns(array|string $value): Testmode {
     $this->config->set('pattern_term', self::multilineToArray($value))->save();
     return $this;
   }
@@ -300,10 +299,10 @@ class Testmode {
   /**
    * Get user patterns.
    *
-   * @return array
+   * @return string[]
    *   Array of user patterns.
    */
-  public function getUserPatterns() {
+  public function getUserPatterns(): array {
     $value = $this->config->get('pattern_user');
     return is_array($value) ? $value : [];
   }
@@ -311,13 +310,13 @@ class Testmode {
   /**
    * Set user patterns.
    *
-   * @param string|array $value
+   * @param string[]|string $value
    *   String delimited by a new line or an array.
    *
    * @return \Drupal\testmode\Testmode
    *   Current class instance.
    */
-  public function setUserPatterns($value) {
+  public function setUserPatterns(array|string $value): Testmode {
     $this->config->set('pattern_user', self::multilineToArray($value))->save();
     return $this;
   }
@@ -336,7 +335,7 @@ class Testmode {
    * @return bool
    *   TRUE if subject matches pattern, FALSE otherwise.
    */
-  public static function matchLike($like_pattern, $subject) {
+  public static function matchLike(string $like_pattern, string $subject): bool {
     $like_pattern = str_replace('\%', 'LIKE_PERCENT_CHARACTER_PLACEHOLDER', $like_pattern);
     $like_pattern = str_replace('\_', 'LIKE_UNDERSCORE_CHARACTER_PLACEHOLDER', $like_pattern);
     $like_pattern = preg_quote($like_pattern);
@@ -352,13 +351,13 @@ class Testmode {
   /**
    * Helper to convert multi-line strings into an array.
    *
-   * @param string $string
+   * @param string|array<string> $string
    *   String value to convert.
    *
-   * @return array
+   * @return string[]
    *   Array of values.
    */
-  public static function multilineToArray($string) {
+  public static function multilineToArray(array|string $string): array {
     $lines = is_array($string) ? $string : explode("\n", str_replace("\r\n", "\n", $string));
     return array_values(array_filter(array_map('trim', $lines)));
   }
@@ -366,13 +365,13 @@ class Testmode {
   /**
    * Helper to convert an array to multi-line string value.
    *
-   * @param string|array $array
+   * @param string[]|string $array
    *   Array to convert.
    *
    * @return string
    *   String value of the array.
    */
-  public static function arrayToMultiline($array) {
+  public static function arrayToMultiline(array|string $array): string {
     $array = is_array($array) ? $array : [$array];
     return implode(PHP_EOL, array_filter($array));
   }

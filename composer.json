@@ -1,7 +1,7 @@
 {
     "name": "drupal/testmode",
-    "description": "Alter existing site content and other configurations when running tests.",
     "type": "drupal-module",
+    "description": "Alter existing site content and other configurations when running tests.",
     "license": "GPL-2.0-or-later",
     "authors": [
         {

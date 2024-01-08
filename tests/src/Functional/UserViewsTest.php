@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\Tests\testmode\Functional;
 
 use Drupal\testmode\Testmode;
@@ -15,21 +17,21 @@ class UserViewsTest extends TestmodeTestBase {
   /**
    * Modules to enable.
    *
-   * @var array
+   * @var array<string>
    */
   protected static $modules = ['user', 'views'];
 
   /**
    * Views used by this test.
    *
-   * @var array
+   * @var array<string>
    */
-  public static $testViews = ['test_testmode_user'];
+  public static array $testViews = ['test_testmode_user'];
 
   /**
    * Test user view without caching.
    */
-  public function testUserViewNoCache() {
+  public function testUserViewNoCache(): void {
     $this->createUsers(50);
 
     $this->testmode->setUserPatterns(Testmode::arrayToMultiline([
@@ -38,7 +40,10 @@ class UserViewsTest extends TestmodeTestBase {
     ]));
 
     // Login to bypass page caching.
-    $this->drupalLogin($this->drupalCreateUser(['access user profiles']));
+    $user_with_access_user_profiles_permission = $this->drupalCreateUser(['access user profiles']);
+    if ($user_with_access_user_profiles_permission) {
+      $this->drupalLogin($user_with_access_user_profiles_permission);
+    }
 
     // Add test view to a list of views.
     $this->testmode->setUserViews('test_testmode_user');
@@ -76,7 +81,7 @@ class UserViewsTest extends TestmodeTestBase {
   /**
    * Test user view with tag-based caching.
    */
-  public function testUserViewCacheTag() {
+  public function testUserViewCacheTag():void {
     $this->createUsers(50);
 
     $this->testmode->setUserPatterns(Testmode::arrayToMultiline([
@@ -85,7 +90,10 @@ class UserViewsTest extends TestmodeTestBase {
     ]));
 
     // Login to bypass page caching.
-    $this->drupalLogin($this->drupalCreateUser(['access user profiles']));
+    $user_with_access_user_profiles_permission = $this->drupalCreateUser(['access user profiles']);
+    if ($user_with_access_user_profiles_permission) {
+      $this->drupalLogin($user_with_access_user_profiles_permission);
+    }
 
     // Add test view to a list of views.
     $this->testmode->setUserViews('test_testmode_user');
@@ -130,7 +138,7 @@ class UserViewsTest extends TestmodeTestBase {
   /**
    * Test user view for default User page with tag-based caching.
    */
-  public function testUserViewContentNoCache() {
+  public function testUserViewContentNoCache(): void {
     $this->createUsers(50);
 
     $this->testmode->setUserPatterns(Testmode::arrayToMultiline([
@@ -181,7 +189,7 @@ class UserViewsTest extends TestmodeTestBase {
   /**
    * Helper to create users.
    */
-  protected function createUsers($count = 0) {
+  protected function createUsers(int $count = 0): void {
     for ($i = 0; $i < $count + 2; $i++) {
       $name = sprintf('User %s %s', $i + 1, $this->randomMachineName());
       $email = str_replace(' ', '_', $name) . '@somedomain.com';

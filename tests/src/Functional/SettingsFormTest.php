@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\Tests\testmode\Functional;
 
 use Drupal\testmode\Testmode;
@@ -14,21 +16,21 @@ class SettingsFormTest extends TestmodeTestBase {
   /**
    * Modules to enable.
    *
-   * @var array
+   * @var string[]
    */
   protected static $modules = ['testmode'];
 
   /**
    * Test that setting form works correctly.
    */
-  public function testSettingsFormDefaults() {
+  public function testSettingsFormDefaults(): void {
     $this->drupalLoginAdmin();
 
     $this->drupalGet('admin/config/development/testmode');
-    $this->assertSession()->fieldValueEquals('mode', 0);
+    $this->assertSession()->fieldValueEquals('mode', '0');
     $this->assertSession()->fieldValueEquals('views_node', 'content');
     $this->assertSession()->fieldValueEquals('views_term', '');
-    $this->assertSession()->fieldValueEquals('list_term', 1);
+    $this->assertSession()->fieldValueEquals('list_term', '1');
     $this->assertSession()->fieldValueEquals('views_user', 'user_admin_people');
     $this->assertSession()->fieldValueEquals('pattern_node', '[TEST%');
     $this->assertSession()->fieldValueEquals('pattern_term', '[TEST%');
@@ -38,14 +40,14 @@ class SettingsFormTest extends TestmodeTestBase {
   /**
    * Test that setting form can be submitted correctly.
    */
-  public function testSettingsFormSubmit() {
+  public function testSettingsFormSubmit(): void {
     $this->drupalLoginAdmin();
 
     $this->drupalGet('admin/config/development/testmode');
-    $this->assertSession()->fieldValueEquals('mode', 0);
+    $this->assertSession()->fieldValueEquals('mode', '0');
     $this->assertSession()->fieldValueEquals('views_node', 'content');
     $this->assertSession()->fieldValueEquals('views_term', '');
-    $this->assertSession()->fieldValueEquals('list_term', 1);
+    $this->assertSession()->fieldValueEquals('list_term', '1');
     $this->assertSession()->fieldValueEquals('views_user', 'user_admin_people');
     $this->assertSession()->fieldValueEquals('pattern_node', '[TEST%');
     $this->assertSession()->fieldValueEquals('pattern_term', '[TEST%');
@@ -90,7 +92,7 @@ class SettingsFormTest extends TestmodeTestBase {
   /**
    * Test that enabling/disabling test mode through the form shows message.
    */
-  public function testModeSwitch() {
+  public function testModeSwitch(): void {
     $this->drupalLoginAdmin();
 
     $this->drupalGet('admin/config/development/testmode');
@@ -99,14 +101,14 @@ class SettingsFormTest extends TestmodeTestBase {
     $this->drupalGet('admin/config/development/testmode');
 
     $this->submitForm([
-      'mode' => 1,
+      'mode' => '1',
     ], 'Save configuration');
     $this->assertTrue($this->testmode->isTestMode());
     $this->assertSession()->pageTextContains('Test mode is enabled');
     $this->drupalGet('admin/config/development/testmode');
 
     $this->submitForm([
-      'mode' => 0,
+      'mode' => '0',
     ], 'Save configuration');
     $this->assertFalse($this->testmode->isTestMode(), 'Test mode is disabled by default');
     $this->assertSession()->pageTextNotContains('Test mode is enabled');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\Tests\testmode\Functional;
 
 /**
@@ -12,7 +14,7 @@ class DefaultConfigTest extends TestmodeTestBase {
   /**
    * Test that default configuration is correctly installed.
    */
-  public function testDefaultConfig() {
+  public function testDefaultConfig(): void {
     $this->assertEquals(['content'], $this->testmode->getNodeViews());
     $this->assertEquals([''], $this->testmode->getTermViews());
     $this->assertEquals(TRUE, $this->testmode->getListTerm());
