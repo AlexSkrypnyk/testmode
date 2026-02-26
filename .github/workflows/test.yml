@@ -161,14 +161,14 @@ jobs:
           BROWSERTEST_OUTPUT_DIRECTORY: /tmp
 
       - name: Upload test results as an artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: Artifacts (${{ matrix.name }})
           path: build/web/sites/simpletest/browser_output
 
       - name: Upload coverage report as an artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{github.job}}-code-coverage-report-${{ matrix.name }}
           path: ./.logs/coverage/phpunit/.coverage-html
