@@ -1,12 +1,28 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": ["config:recommended"],
     "automerge": true,
+    "rangeStrategy": "bump",
     "dependencyDashboard": true,
-    "extends": [
-        "config:base"
-    ],
-    "ignorePaths": [
-        ".circleci/config.yml",
-        ".github/workflows/test-php.yml"
+    "pinDigests": true,
+    "major": {
+        "enabled": false
+    },
+    "groupName": "all dependencies",
+    "groupSlug": "all",
+    "branchPrefix": "deps/",
+    "composer": {
+        "managerFilePatterns": ["/composer\\.dev\\.json$/"]
+    },
+    "packageRules": [
+        {
+            "matchManagers": ["composer"],
+            "matchFileNames": ["composer.json"],
+            "enabled": false
+        },
+        {
+            "matchPackageNames": ["*"],
+            "groupName": "all dependencies",
+            "groupSlug": "all"
+        }
     ]
 }
