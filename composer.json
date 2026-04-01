@@ -19,9 +19,6 @@
     "require": {
         "php": ">=8.2"
     },
-    "require-dev": {
-        "drupal/autologout": "^2"
-    },
     "suggest": {
         "drupal/search_api": "^1.25"
     }
