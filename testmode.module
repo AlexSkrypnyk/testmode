@@ -79,10 +79,6 @@ function testmode_views_query_alter(ViewExecutable $view, QueryPluginBase $query
  */
 function _testmode_apply_pattern_filter(QueryPluginBase $query, string $datasource_id, string $property_path, string $sql_table, array $patterns): void {
   if ($query instanceof Sql) {
-    // @phpstan-ignore-next-line
-    if (!in_array($property_path, array_keys($query->fields))) {
-      $query->addField($sql_table, $property_path);
-    }
     $group = (string) $query->setWhereGroup('OR');
     foreach ($patterns as $pattern) {
       $query->addWhere($group, $sql_table . '.' . $property_path, $pattern, 'LIKE');
