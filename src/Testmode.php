@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\testmode;
 
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\State\StateInterface;
 
@@ -33,11 +32,11 @@ class Testmode {
   protected static ?Testmode $instance = NULL;
 
   /**
-   * Drupal config instance.
+   * Drupal config factory.
    *
-   * @var \Drupal\Core\Config\Config
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected Config $config;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Drupal state instance.
@@ -50,7 +49,7 @@ class Testmode {
    * Testmode constructor.
    */
   public function __construct(ConfigFactoryInterface $configFactory, StateInterface $state) {
-    $this->config = $configFactory->getEditable('testmode.settings');
+    $this->configFactory = $configFactory;
     $this->state = $state;
   }
 
@@ -154,7 +153,7 @@ class Testmode {
    *   Array of node views machine names.
    */
   public function getNodeViews(): array {
-    $value = $this->config->get('views_node');
+    $value = $this->configFactory->get('testmode.settings')->get('views_node');
     return is_array($value) ? $value : [];
   }
 
@@ -168,7 +167,9 @@ class Testmode {
    *   Current class instance.
    */
   public function setNodeViews(array|string $value): Testmode {
-    $this->config->set('views_node', self::multilineToArray($value))->save();
+    $this->configFactory->getEditable('testmode.settings')
+      ->set('views_node', self::multilineToArray($value))
+      ->save();
     return $this;
   }
 
@@ -179,7 +180,7 @@ class Testmode {
    *   Array of term views machine names.
    */
   public function getTermViews(): array {
-    $value = $this->config->get('views_term');
+    $value = $this->configFactory->get('testmode.settings')->get('views_term');
     return is_array($value) ? $value : [];
   }
 
@@ -193,7 +194,9 @@ class Testmode {
    *   Current class instance.
    */
   public function setTermViews(array|string $value): Testmode {
-    $this->config->set('views_term', self::multilineToArray($value))->save();
+    $this->configFactory->getEditable('testmode.settings')
+      ->set('views_term', self::multilineToArray($value))
+      ->save();
     return $this;
   }
 
@@ -204,7 +207,7 @@ class Testmode {
    *   TRUE if the flag is set, FALSE otherwise.
    */
   public function getListTerm(): bool {
-    return (bool) $this->config->get('list_term');
+    return (bool) $this->configFactory->get('testmode.settings')->get('list_term');
   }
 
   /**
@@ -217,7 +220,9 @@ class Testmode {
    *   Current class instance.
    */
   public function setTermsList(bool $value): Testmode {
-    $this->config->set('list_term', $value)->save();
+    $this->configFactory->getEditable('testmode.settings')
+      ->set('list_term', $value)
+      ->save();
     return $this;
   }
 
@@ -228,7 +233,7 @@ class Testmode {
    *   Array of user views machine names.
    */
   public function getUserViews(): array {
-    $value = $this->config->get('views_user');
+    $value = $this->configFactory->get('testmode.settings')->get('views_user');
     return is_array($value) ? $value : [];
   }
 
@@ -242,7 +247,9 @@ class Testmode {
    *   Current class instance.
    */
   public function setUserViews(array|string $value): Testmode {
-    $this->config->set('views_user', self::multilineToArray($value))->save();
+    $this->configFactory->getEditable('testmode.settings')
+      ->set('views_user', self::multilineToArray($value))
+      ->save();
     return $this;
   }
 
@@ -253,7 +260,7 @@ class Testmode {
    *   Array of node patterns.
    */
   public function getNodePatterns(): array {
-    $value = $this->config->get('pattern_node');
+    $value = $this->configFactory->get('testmode.settings')->get('pattern_node');
     return is_array($value) ? $value : [];
   }
 
@@ -267,7 +274,9 @@ class Testmode {
    *   Current class instance.
    */
   public function setNodePatterns(array|string $value): Testmode {
-    $this->config->set('pattern_node', self::multilineToArray($value))->save();
+    $this->configFactory->getEditable('testmode.settings')
+      ->set('pattern_node', self::multilineToArray($value))
+      ->save();
     return $this;
   }
 
@@ -278,7 +287,7 @@ class Testmode {
    *   Array of term patterns.
    */
   public function getTermPatterns(): array {
-    $value = $this->config->get('pattern_term');
+    $value = $this->configFactory->get('testmode.settings')->get('pattern_term');
     return is_array($value) ? $value : [];
   }
 
@@ -292,7 +301,9 @@ class Testmode {
    *   Current class instance.
    */
   public function setTermPatterns(array|string $value): Testmode {
-    $this->config->set('pattern_term', self::multilineToArray($value))->save();
+    $this->configFactory->getEditable('testmode.settings')
+      ->set('pattern_term', self::multilineToArray($value))
+      ->save();
     return $this;
   }
 
@@ -303,7 +314,7 @@ class Testmode {
    *   Array of user patterns.
    */
   public function getUserPatterns(): array {
-    $value = $this->config->get('pattern_user');
+    $value = $this->configFactory->get('testmode.settings')->get('pattern_user');
     return is_array($value) ? $value : [];
   }
 
@@ -317,7 +328,9 @@ class Testmode {
    *   Current class instance.
    */
   public function setUserPatterns(array|string $value): Testmode {
-    $this->config->set('pattern_user', self::multilineToArray($value))->save();
+    $this->configFactory->getEditable('testmode.settings')
+      ->set('pattern_user', self::multilineToArray($value))
+      ->save();
     return $this;
   }
 
