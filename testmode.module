@@ -41,48 +41,78 @@ function testmode_views_query_alter(ViewExecutable $view, QueryPluginBase $query
   $testmode = Testmode::getInstance();
   if ($testmode->isTestMode()) {
     if (in_array($view->id(), $testmode->getNodeViews())) {
-      $operator = '=';
-      $field = 'title';
-      if ($query instanceof Sql) {
-        // Add 'title' field to the query if it was not originally provided.
-        if (!in_array('title', array_keys($query->fields))) {
-          $query->addField('node_field_data', $field);
-        }
-        $field = 'node_field_data.' . $field;
-        $operator = 'LIKE';
-      }
-      $group = $query->setWhereGroup('OR');
-      foreach ($testmode->getNodePatterns() as $pattern) {
-        $query->addWhere($group, $field, $pattern, $operator);
-      }
+      _testmode_apply_pattern_filter($query, 'entity:node', 'title', 'node_field_data', $testmode->getNodePatterns());
       return;
     }
 
     if (in_array($view->id(), $testmode->getTermViews())) {
-      // Add 'name' field to the query if it was not originally provided.
-      // @phpstan-ignore-next-line
-      if (!in_array('name', array_keys($query->fields))) {
-        $query->addField('taxonomy_term_field_data', 'name');
-      }
-      $group = $query->setWhereGroup('OR');
-      foreach ($testmode->getTermPatterns() as $pattern) {
-        $query->addWhere($group, 'taxonomy_term_field_data.name', $pattern, 'LIKE');
-      }
+      _testmode_apply_pattern_filter($query, 'entity:taxonomy_term', 'name', 'taxonomy_term_field_data', $testmode->getTermPatterns());
       return;
     }
 
     if (in_array($view->id(), $testmode->getUserViews())) {
-      // Add 'mail' field to the query if it was not originally provided.
-      // @phpstan-ignore-next-line
-      if (!in_array('mail', array_keys($query->fields))) {
-        $query->addField('users_field_data', 'mail');
-      }
-      $group = $query->setWhereGroup('OR');
-      foreach ($testmode->getUserPatterns() as $pattern) {
-        $query->addWhere($group, 'users_field_data.mail', $pattern, 'LIKE');
-      }
+      _testmode_apply_pattern_filter($query, 'entity:user', 'mail', 'users_field_data', $testmode->getUserPatterns());
       return;
     }
+  }
+}
+
+/**
+ * Apply a testmode pattern filter to a Views query.
+ *
+ * Handles both SQL-backed queries and Search API-backed queries. For SQL
+ * queries, filters on the given database column using 'LIKE'. For Search API
+ * queries, resolves the indexed field whose property path matches the entity
+ * column (e.g. the indexed field with property path 'title' on the node
+ * datasource) and adds a condition on that field ID.
+ *
+ * @param \Drupal\views\Plugin\views\query\QueryPluginBase $query
+ *   The views query (Sql or SearchApiQuery).
+ * @param string $datasource_id
+ *   The Search API entity datasource ID, e.g. 'entity:node'.
+ * @param string $property_path
+ *   The entity field's property path, e.g. 'title', 'name', 'mail'.
+ * @param string $sql_table
+ *   The SQL column's table name for SQL-backed views, e.g. 'node_field_data'.
+ * @param string[] $patterns
+ *   The LIKE patterns configured in testmode.
+ */
+function _testmode_apply_pattern_filter(QueryPluginBase $query, string $datasource_id, string $property_path, string $sql_table, array $patterns): void {
+  if ($query instanceof Sql) {
+    // @phpstan-ignore-next-line
+    if (!in_array($property_path, array_keys($query->fields))) {
+      $query->addField($sql_table, $property_path);
+    }
+    $group = $query->setWhereGroup('OR');
+    foreach ($patterns as $pattern) {
+      $query->addWhere($group, $sql_table . '.' . $property_path, $pattern, 'LIKE');
+    }
+    return;
+  }
+
+  if ($query instanceof SearchApiQuery) {
+    // Resolve which indexed field on this Search API index maps to the
+    // entity's property (e.g. 'content_title' on the 'entity:node' datasource
+    // with property path 'title'). The field ID is user-defined at index
+    // creation time, so the only portable way to find it is to scan the index
+    // field definitions.
+    $field_id = NULL;
+    foreach ($query->getIndex()->getFields() as $id => $field) {
+      if ($field->getDatasourceId() === $datasource_id && $field->getPropertyPath() === $property_path) {
+        $field_id = $id;
+        break;
+      }
+    }
+    if ($field_id === NULL) {
+      // The index does not track the entity's filterable property.
+      // Without a field to match against, testmode cannot filter this view.
+      return;
+    }
+    $group = $query->setWhereGroup('OR');
+    foreach ($patterns as $pattern) {
+      $query->addWhere($group, $field_id, $pattern, '=');
+    }
+    return;
   }
 }
 
