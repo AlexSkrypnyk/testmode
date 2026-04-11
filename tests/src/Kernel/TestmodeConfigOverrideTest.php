@@ -38,6 +38,19 @@ class TestmodeConfigOverrideTest extends KernelTestBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  protected function tearDown(): void {
+    // Remove any $config override installed by a test so the global state
+    // does not leak into other kernel tests sharing the same PHP process.
+    unset($GLOBALS['config']['testmode.settings']);
+    if (\Drupal::hasContainer()) {
+      \Drupal::configFactory()->reset('testmode.settings');
+    }
+    parent::tearDown();
+  }
+
+  /**
    * Tests that a getter reflects $config[...] overrides.
    *
    * @param string $setter
