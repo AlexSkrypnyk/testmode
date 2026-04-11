@@ -83,7 +83,7 @@ function _testmode_apply_pattern_filter(QueryPluginBase $query, string $datasour
     if (!in_array($property_path, array_keys($query->fields))) {
       $query->addField($sql_table, $property_path);
     }
-    $group = $query->setWhereGroup('OR');
+    $group = (string) $query->setWhereGroup('OR');
     foreach ($patterns as $pattern) {
       $query->addWhere($group, $sql_table . '.' . $property_path, $pattern, 'LIKE');
     }
@@ -108,7 +108,7 @@ function _testmode_apply_pattern_filter(QueryPluginBase $query, string $datasour
       // Without a field to match against, testmode cannot filter this view.
       return;
     }
-    $group = $query->setWhereGroup('OR');
+    $group = (int) $query->setWhereGroup('OR');
     foreach ($patterns as $pattern) {
       $query->addWhere($group, $field_id, $pattern, '=');
     }
