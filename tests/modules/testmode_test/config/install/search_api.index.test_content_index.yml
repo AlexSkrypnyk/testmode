@@ -77,7 +77,7 @@ field_settings:
     dependencies:
       module:
         - node
-  title:
+  content_title:
     label: Title
     datasource_id: 'entity:node'
     property_path: title
@@ -149,7 +149,7 @@ processor_settings:
     all_fields: false
     fields:
       - rendered_item
-      - title
+      - content_title
   language_with_fallback: {  }
   rendered_item:
     weights:
@@ -162,7 +162,7 @@ processor_settings:
     all_fields: false
     fields:
       - rendered_item
-      - title
+      - content_title
     stopwords:
       - a
       - an
@@ -206,7 +206,7 @@ processor_settings:
     all_fields: false
     fields:
       - rendered_item
-      - title
+      - content_title
     spaces: ''
     ignored: ._-
     overlap_cjk: 1
@@ -218,7 +218,7 @@ processor_settings:
     all_fields: false
     fields:
       - rendered_item
-      - title
+      - content_title
 tracker_settings:
   default:
     indexing_order: fifo
