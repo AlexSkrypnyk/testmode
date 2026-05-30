@@ -60,8 +60,8 @@ https://www.drupal.org/project/issues/testmode
 ## Local development
 
 1. Install PHP with SQLite support and Composer
-3. Clone this repository
-4. Run `ahoy build`
+2. Clone this repository
+3. Run `ahoy build`
 
 ## Building website
 
@@ -101,20 +101,10 @@ DRUPAL_VERSION=11.1 ahoy build      # Drupal 11.1
 The `minimum-stability` setting in the `composer.json` file is
 automatically adjusted to match the specified Drupal version's stability.
 
-### Using Drupal project fork
-
-If you want to use a custom fork of `drupal-composer/drupal-project`, set the
-`DRUPAL_PROJECT_REPO` environment variable before running the `ahoy build`
-command:
-
-```bash
-DRUPAL_PROJECT_REPO=https://github.com/me/drupal-project-fork.git ahoy build
-```
-
 ### Patching dependencies
 
 To apply patches to the dependencies, add a patch to the `patches` section of
-`composer.json`. Local patches are be sourced from the `patches` directory.
+`composer.json`. Local patches are sourced from the `patches` directory.
 
 ### Providing `GITHUB_TOKEN`
 
@@ -127,15 +117,42 @@ The `provision` command installs the Drupal website from the `standard`
 profile with the extension (and any `suggest`'ed extensions) enabled. The
 profile can be changed by setting the `DRUPAL_PROFILE` environment variable.
 
-The website will be available at http://localhost:8000. The hostname and port
-can be changed by setting the `WEBSERVER_HOST` and `WEBSERVER_PORT` environment
-variables.
+The website will be available at http://localhost:8000 by default. The
+hostname can be changed by setting the `WEBSERVER_HOST` environment variable.
+
+The `WEBSERVER_PORT` is resolved with the following precedence:
+
+1. **`WEBSERVER_PORT` exported in the shell** - used as-is. Useful for one-off
+   runs: `WEBSERVER_PORT=9000 ahoy build`.
+2. **`WEBSERVER_PORT` line in the project-root `.env` file** - used as-is.
+   The `start` script does not modify `.env` when this entry is already
+   present, so the same port is reused across `start`, `stop`, `provision`,
+   `drush` and `login` commands.
+3. **Neither is set** - the `start` script discovers the first free port in
+   the range `8000-8099` and writes it to `.env` as `WEBSERVER_PORT=NNNN`.
+   Subsequent commands read this value from `.env`.
+
+To force re-discovery, delete `.env` (or just the `WEBSERVER_PORT` line in
+it) and re-run `ahoy start`.
 
 An SQLite database is created in `/tmp/site_testmode.sqlite` file.
 You can browse the contents of the created SQLite database using
 [DB Browser for SQLite](https://sqlitebrowser.org/).
 
 A one-time login link will be printed to the console.
+
+### Step-debugging with XDebug
+
+PHP step-debugging is supported via [XDebug](https://xdebug.org/docs/install). Install the XDebug PHP extension on your host (`php -v` should mention `with Xdebug`), then toggle it on the development server:
+
+```bash
+ahoy debug      # restart with XDebug enabled (aliases: debug-on, xdebug, xdebug-on)
+ahoy start      # restart without XDebug (aliases: debug-off, xdebug-off)
+```
+
+The `debug` command probes the running PHP server's command line for `xdebug.mode=debug` and skips the restart if XDebug is already enabled. Code coverage stays on [pcov](https://github.com/krakjoe/pcov) because `xdebug.mode=debug` does not include `coverage`.
+
+To start and stop debug sessions from the browser, install the Xdebug Helper extension: [Chrome](https://chromewebstore.google.com/detail/xdebug-helper-by-jetbrain/aoelhdemabeimdhedkidlnbkfhnhgnhm) / [Firefox](https://addons.mozilla.org/en-US/firefox/addon/xdebug-helper-by-jetbrains/).
 
 ## Coding standards
 
