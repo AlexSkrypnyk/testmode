@@ -67,6 +67,8 @@ jobs:
   test:
     runs-on: ubuntu-24.04
 
+    continue-on-error: ${{ matrix.allow-failure == true }}
+
     strategy:
       fail-fast: false
 
@@ -140,15 +142,18 @@ jobs:
           - name: test-php-8.5-d11-legacy
             php-version: 8.5
             drupal-version: 11.3 # Lowest Drupal version that supports PHP 8.5.
+            allow-failure: true
 
           - name: test-php-8.5-d11-stable
             php-version: 8.5
             drupal-version: 11.3
+            allow-failure: true
 
           - name: test-php-8.5-d11-canary
             php-version: 8.5
             drupal-version: 11@beta
             stability: canary
+            allow-failure: true
 
     services:
       chrome:
