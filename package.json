@@ -18,9 +18,6 @@
     "npm": ">=8.19.4",
     "node": ">=18.20.8"
   },
-  "dependencies": {
-    "is-positive": "^3.1.0"
-  },
   "devDependencies": {
     "@homer0/prettier-plugin-jsdoc": "^11.1.0",
     "eslint": "^8.57.1",
