@@ -33,7 +33,6 @@ class TestmodeConfigOverrideTest extends KernelTestBase {
     // picks up the current container's config factory.
     $reflection = new \ReflectionClass(Testmode::class);
     $instance = $reflection->getProperty('instance');
-    $instance->setAccessible(TRUE);
     $instance->setValue(NULL, NULL);
   }
 
