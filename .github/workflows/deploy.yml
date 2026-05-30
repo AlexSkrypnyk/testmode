@@ -7,8 +7,12 @@ on:
     types:
       - completed
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04
 
     env:
@@ -22,6 +26,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@6b84f2e793b32fa0b03a379cadadec75cc539391 # v2
@@ -35,7 +40,6 @@ jobs:
       - name: Deploy to Remote
         env:
           DEPLOY_BRANCH: ${{ env.DEPLOY_BRANCH }}
-          HEAD_REF: ${{ github.head_ref }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
         run: |
-          REF=${{ github.event.pull_request && env.HEAD_REF || github.ref_name }}
-          DEPLOY_BRANCH=${DEPLOY_BRANCH:-${REF}} .devtools/deploy
+          DEPLOY_BRANCH="${DEPLOY_BRANCH:-${HEAD_BRANCH}}" .devtools/deploy

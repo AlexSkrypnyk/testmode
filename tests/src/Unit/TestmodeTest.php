@@ -23,7 +23,7 @@ class TestmodeTest extends UnitTestCase {
    *
    * Test for matchLike().
    *
-   * @dataProvider providerMatchLike
+   * @dataProvider dataProviderMatchLike
    */
   public function testMatchLike(string $pattern, string $subject, bool $is_match): void {
     $actual = Testmode::matchLike($pattern, $subject);
@@ -41,7 +41,7 @@ class TestmodeTest extends UnitTestCase {
    * @return array<array<mixed>>
    *   Data provider for test.
    */
-  public static function providerMatchLike(): array {
+  public static function dataProviderMatchLike(): array {
     return [
       ['', '', TRUE],
       ['t', 't', TRUE],
@@ -103,7 +103,7 @@ class TestmodeTest extends UnitTestCase {
    * @param array<string> $expected
    *   Expected array string.
    *
-   * @dataProvider providerMultilineToArray
+   * @dataProvider dataProviderMultilineToArray
    */
   public function testMultilineToArray(string|array $string, array $expected): void {
     $actual = Testmode::multilineToArray($string);
@@ -116,7 +116,7 @@ class TestmodeTest extends UnitTestCase {
    * @return array<array<mixed>>
    *   Provider data for test.
    */
-  public static function providerMultilineToArray(): array {
+  public static function dataProviderMultilineToArray(): array {
     return [
       ['', []],
       [' ', []],
@@ -155,7 +155,7 @@ class TestmodeTest extends UnitTestCase {
    * @param string $expected
    *   String expected.
    *
-   * @dataProvider providerArrayToTextarea
+   * @dataProvider dataProviderArrayToTextarea
    */
   public function testArrayToTextarea(array|string $array, string $expected): void {
     $actual = Testmode::arrayToMultiline($array);
@@ -168,7 +168,7 @@ class TestmodeTest extends UnitTestCase {
    * @return array<array<mixed>>
    *   Provider test data.
    */
-  public static function providerArrayToTextarea(): array {
+  public static function dataProviderArrayToTextarea(): array {
     return [
       [[], ''],
       [[''], ''],

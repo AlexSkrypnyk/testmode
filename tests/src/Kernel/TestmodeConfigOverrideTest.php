@@ -33,7 +33,6 @@ class TestmodeConfigOverrideTest extends KernelTestBase {
     // picks up the current container's config factory.
     $reflection = new \ReflectionClass(Testmode::class);
     $instance = $reflection->getProperty('instance');
-    $instance->setAccessible(TRUE);
     $instance->setValue(NULL, NULL);
   }
 
@@ -66,7 +65,7 @@ class TestmodeConfigOverrideTest extends KernelTestBase {
    * @param mixed $expected
    *   Value expected to be returned by the getter once the override is set.
    *
-   * @dataProvider dataProviderOverrides
+   * @dataProvider dataProviderGetterReflectsOverride
    */
   public function testGetterReflectsOverride(string $setter, string $getter, string $config_key, mixed $stored_value, mixed $override_value, mixed $expected): void {
     $testmode = Testmode::getInstance();
@@ -88,7 +87,7 @@ class TestmodeConfigOverrideTest extends KernelTestBase {
    * @return array<string, array<int, mixed>>
    *   Test cases.
    */
-  public static function dataProviderOverrides(): array {
+  public static function dataProviderGetterReflectsOverride(): array {
     return [
       'views_node' => ['setNodeViews', 'getNodeViews', 'views_node', ['content'], ['content', 'my_view'], ['content', 'my_view']],
       'views_term' => ['setTermViews', 'getTermViews', 'views_term', ['term_view'], ['term_view', 'other_term_view'], ['term_view', 'other_term_view']],
