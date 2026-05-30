@@ -48,8 +48,8 @@ class Testmode {
   /**
    * Testmode constructor.
    */
-  public function __construct(ConfigFactoryInterface $configFactory, StateInterface $state) {
-    $this->configFactory = $configFactory;
+  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state) {
+    $this->configFactory = $config_factory;
     $this->state = $state;
   }
 
