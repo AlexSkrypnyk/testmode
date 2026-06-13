@@ -15,17 +15,13 @@ use Drupal\testmode\Testmode;
 
 /**
  * Settings form for a module.
- *
- * @SuppressWarnings(PHPMD.StaticAccess)
  */
 class SettingsForm extends ConfigFormBase {
 
   /**
    * Testmode class instance.
-   *
-   * @var \Drupal\testmode\Testmode
    */
-  protected $testmode;
+  protected Testmode $testmode;
 
   /**
    * {@inheritdoc}

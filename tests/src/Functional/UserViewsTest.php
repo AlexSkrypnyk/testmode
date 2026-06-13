@@ -23,8 +23,6 @@ class UserViewsTest extends TestmodeFunctionalTestBase {
 
   /**
    * Views used by this test.
-   *
-   * @var array
    */
   public static array $testViews = ['test_testmode_user'];
 

@@ -13,8 +13,6 @@ use Drupal\testmode\Testmode;
  * See https://github.com/AlexSkrypnyk/testmode/issues/46.
  *
  * @group Testmode
- *
- * @SuppressWarnings(PHPMD.StaticAccess)
  */
 class TestmodeConfigOverrideTest extends KernelTestBase {
 

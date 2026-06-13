@@ -121,16 +121,14 @@ function testmode_query_alter(AlterableInterface $query): void {
     $route = Drupal::routeMatch()->getRouteName();
     if ($route == 'entity.taxonomy_vocabulary.overview_form') {
       $testmode = Testmode::getInstance();
-      if ($testmode->isTestMode()) {
-        if ($testmode->getListTerm()) {
-          /** @var \Drupal\Core\Database\Query\SelectInterface $query */
-          $query->join('taxonomy_term_field_data', 'ttfd', 'ttfd.tid = t.tid');
-          $or = $query->orConditionGroup();
-          foreach ($testmode->getTermPatterns() as $pattern) {
-            $or->condition('ttfd.name', $pattern, 'LIKE');
-          }
-          $query->condition($or);
+      if ($testmode->isTestMode() && $testmode->getListTerm()) {
+        /** @var \Drupal\Core\Database\Query\SelectInterface $query */
+        $query->join('taxonomy_term_field_data', 'ttfd', 'ttfd.tid = t.tid');
+        $or = $query->orConditionGroup();
+        foreach ($testmode->getTermPatterns() as $pattern) {
+          $or->condition('ttfd.name', $pattern, 'LIKE');
         }
+        $query->condition($or);
       }
     }
   }

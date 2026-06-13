@@ -10,8 +10,6 @@ use Drupal\views\Tests\ViewTestData;
 
 /**
  * Base class for all Testmode Views tests.
- *
- * @SuppressWarnings(PHPMD.StaticAccess)
  */
 abstract class TestmodeFunctionalTestBase extends ViewTestBase {
 
@@ -43,7 +41,7 @@ abstract class TestmodeFunctionalTestBase extends ViewTestBase {
     if ($import_test_views) {
       $this->drupalCreateContentType(['type' => 'article']);
 
-      ViewTestData::createTestViews(get_class($this), ['testmode_test']);
+      ViewTestData::createTestViews(static::class, ['testmode_test']);
     }
 
     $this->testmode = Testmode::getInstance();
