@@ -14,8 +14,6 @@ use Drupal\Core\State\StateInterface;
  * Class to handle all module operations.
  *
  * @package Drupal\testmode
- *
- * @SuppressWarnings(PHPMD.StaticAccess)
  */
 class Testmode {
 
@@ -26,31 +24,22 @@ class Testmode {
 
   /**
    * The Testmode singleton.
-   *
-   * @var \Drupal\testmode\Testmode
    */
   protected static ?Testmode $instance = NULL;
 
   /**
-   * Drupal config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected ConfigFactoryInterface $configFactory;
-
-  /**
-   * Drupal state instance.
-   *
-   * @var \Drupal\Core\State\StateInterface
-   */
-  protected StateInterface $state;
-
-  /**
    * Testmode constructor.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state) {
-    $this->configFactory = $config_factory;
-    $this->state = $state;
+  public function __construct(
+    /**
+     * Drupal config factory.
+     */
+    protected ConfigFactoryInterface $configFactory,
+    /**
+     * Drupal state instance.
+     */
+    protected StateInterface $state,
+  ) {
   }
 
   /**
@@ -60,7 +49,7 @@ class Testmode {
    *   Instance of the Testmode class.
    */
   public static function getInstance(): Testmode {
-    if (!self::$instance) {
+    if (!self::$instance instanceof Testmode) {
       self::$instance = new self(\Drupal::configFactory(), \Drupal::state());
     }
 
@@ -355,7 +344,7 @@ class Testmode {
     $like_pattern = str_replace('LIKE_PERCENT_CHARACTER_PLACEHOLDER', '\%', $like_pattern);
     $like_pattern = str_replace('LIKE_UNDERSCORE_CHARACTER_PLACEHOLDER', '\_', $like_pattern);
     $like_pattern = preg_replace('/(?<!\\\\)\%/i', '.*', $like_pattern);
-    $like_pattern = preg_replace('/(?<!\\\\)\_/', '.', $like_pattern);
+    $like_pattern = preg_replace('/(?<!\\\\)\_/', '.', (string) $like_pattern);
     $pattern = '/' . $like_pattern . '/';
 
     return (bool) preg_match($pattern, $subject);
@@ -372,7 +361,7 @@ class Testmode {
    */
   public static function multilineToArray(array|string $string): array {
     $lines = is_array($string) ? $string : explode("\n", str_replace("\r\n", "\n", $string));
-    return array_values(array_filter(array_map('trim', $lines)));
+    return array_values(array_filter(array_map(trim(...), $lines)));
   }
 
   /**
