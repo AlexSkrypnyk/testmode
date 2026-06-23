@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\testmode\Unit;
 
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Drupal\Tests\UnitTestCase;
 use Drupal\testmode\Testmode;
 
@@ -16,6 +18,7 @@ use Drupal\testmode\Testmode;
  *
  * @package Drupal\testmode\Tests
  */
+#[Group('Testmode')]
 class TestmodeTest extends UnitTestCase {
 
   /**
@@ -25,6 +28,7 @@ class TestmodeTest extends UnitTestCase {
    *
    * @dataProvider dataProviderMatchLike
    */
+  #[DataProvider('dataProviderMatchLike')]
   public function testMatchLike(string $pattern, string $subject, bool $is_match): void {
     $actual = Testmode::matchLike($pattern, $subject);
     if ($is_match) {
@@ -105,6 +109,7 @@ class TestmodeTest extends UnitTestCase {
    *
    * @dataProvider dataProviderMultilineToArray
    */
+  #[DataProvider('dataProviderMultilineToArray')]
   public function testMultilineToArray(string|array $string, array $expected): void {
     $actual = Testmode::multilineToArray($string);
     $this->assertEquals($expected, $actual);
@@ -157,6 +162,7 @@ class TestmodeTest extends UnitTestCase {
    *
    * @dataProvider dataProviderArrayToTextarea
    */
+  #[DataProvider('dataProviderArrayToTextarea')]
   public function testArrayToTextarea(array|string $array, string $expected): void {
     $actual = Testmode::arrayToMultiline($array);
     $this->assertEquals($expected, $actual);

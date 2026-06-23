@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\testmode\Functional;
 
+use PHPUnit\Framework\Attributes\Group;
 use Drupal\testmode\Testmode;
 
 /**
@@ -11,6 +12,7 @@ use Drupal\testmode\Testmode;
  *
  * @group Testmode
  */
+#[Group('Testmode')]
 class SettingsFormTest extends TestmodeFunctionalTestBase {
 
   /**
