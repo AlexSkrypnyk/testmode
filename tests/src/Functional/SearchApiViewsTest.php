@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\testmode\Functional;
 
+use PHPUnit\Framework\Attributes\Group;
 use Drupal\Tests\search_api\Functional\ExampleContentTrait;
 use Drupal\search_api\Entity\Index;
 use Drupal\testmode\Testmode;
@@ -13,6 +14,7 @@ use Drupal\testmode\Testmode;
  *
  * @group Testmode
  */
+#[Group('Testmode')]
 class SearchApiViewsTest extends TestmodeFunctionalTestBase {
 
   use ExampleContentTrait;

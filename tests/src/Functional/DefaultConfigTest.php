@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\testmode\Functional;
 
+use PHPUnit\Framework\Attributes\Group;
+
 /**
  * Tests the default configuration.
  *
  * @group Testmode
  */
+#[Group('Testmode')]
 class DefaultConfigTest extends TestmodeFunctionalTestBase {
 
   /**

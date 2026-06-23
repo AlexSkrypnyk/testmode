@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\testmode\Functional;
 
+use PHPUnit\Framework\Attributes\Group;
+
 /**
  * Tests the test mode.
  *
  * @group Testmode
  */
+#[Group('Testmode')]
 class ModeTest extends TestmodeFunctionalTestBase {
 
   /**

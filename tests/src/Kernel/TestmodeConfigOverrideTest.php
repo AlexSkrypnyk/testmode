@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\testmode\Kernel;
 
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\testmode\Testmode;
 
@@ -14,6 +16,7 @@ use Drupal\testmode\Testmode;
  *
  * @group Testmode
  */
+#[Group('Testmode')]
 class TestmodeConfigOverrideTest extends KernelTestBase {
 
   /**
@@ -65,6 +68,7 @@ class TestmodeConfigOverrideTest extends KernelTestBase {
    *
    * @dataProvider dataProviderGetterReflectsOverride
    */
+  #[DataProvider('dataProviderGetterReflectsOverride')]
   public function testGetterReflectsOverride(string $setter, string $getter, string $config_key, mixed $stored_value, mixed $override_value, mixed $expected): void {
     $testmode = Testmode::getInstance();
     $testmode->{$setter}($stored_value);
