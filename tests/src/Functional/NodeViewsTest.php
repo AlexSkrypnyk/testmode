@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\testmode\Functional;
 
+use PHPUnit\Framework\Attributes\Group;
 use Drupal\testmode\Testmode;
 use Drupal\views\Views;
 
@@ -12,6 +13,7 @@ use Drupal\views\Views;
  *
  * @group Testmode
  */
+#[Group('Testmode')]
 class NodeViewsTest extends TestmodeFunctionalTestBase {
 
   /**

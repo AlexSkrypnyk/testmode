@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\testmode\Functional;
 
+use PHPUnit\Framework\Attributes\Group;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
@@ -15,6 +16,7 @@ use Drupal\views\Views;
  *
  * @group Testmode
  */
+#[Group('Testmode')]
 class TermViewsTest extends TestmodeFunctionalTestBase {
 
   /**
@@ -43,6 +45,7 @@ class TermViewsTest extends TestmodeFunctionalTestBase {
    *
    * @group wip1
    */
+  #[Group('wip1')]
   public function testTermViewNoCache(): void {
     $this->createVocabulary();
     $this->createTerms(50);
