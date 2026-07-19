@@ -51,9 +51,7 @@ class SearchApiViewsTest extends TestmodeFunctionalTestBase {
 
     // Login to bypass page caching.
     $account = $this->drupalCreateUser();
-    if ($account) {
-      $this->drupalLogin($account);
-    }
+    $this->drupalLogin($account);
 
     // Add test view to a list of views.
     $this->testmode->setNodeViews('test_testmode_searchapi');

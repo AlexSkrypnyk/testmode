@@ -57,9 +57,7 @@ class TermViewsTest extends TestmodeFunctionalTestBase {
 
     // Login to bypass page caching.
     $account = $this->drupalCreateUser();
-    if ($account) {
-      $this->drupalLogin($account);
-    }
+    $this->drupalLogin($account);
 
     // Add test view to a list of views.
     $this->testmode->setTermViews('test_testmode_term');
@@ -108,9 +106,7 @@ class TermViewsTest extends TestmodeFunctionalTestBase {
 
     // Login to bypass page caching.
     $account = $this->drupalCreateUser();
-    if ($account) {
-      $this->drupalLogin($account);
-    }
+    $this->drupalLogin($account);
 
     // Add test view to a list of Testmode views.
     $this->testmode->setTermViews('test_testmode_term');
@@ -253,13 +249,11 @@ class TermViewsTest extends TestmodeFunctionalTestBase {
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   protected function createTerm(array $settings = []): Term {
-    $filter_formats = filter_formats();
-    $format = array_pop($filter_formats);
     $settings += [
       'name' => $this->randomMachineName(),
       'description' => $this->randomMachineName(),
-      // Use the first available text format.
-      'format' => $format->id(),
+      // Use the fallback text format.
+      'format' => filter_fallback_format(),
       'vid' => $this->vocabulary->id(),
       'langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
     ];
