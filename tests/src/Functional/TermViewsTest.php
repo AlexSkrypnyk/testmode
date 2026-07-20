@@ -253,7 +253,7 @@ class TermViewsTest extends TestmodeFunctionalTestBase {
       'name' => $this->randomMachineName(),
       'description' => $this->randomMachineName(),
       // Use the fallback text format.
-      'format' => filter_fallback_format(),
+      'format' => \Drupal::config('filter.settings')->get('fallback_format'),
       'vid' => $this->vocabulary->id(),
       'langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
     ];
