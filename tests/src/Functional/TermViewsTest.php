@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\testmode\Functional;
 
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\Attributes\Group;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\taxonomy\Entity\Term;
@@ -17,6 +18,7 @@ use Drupal\views\Views;
  * @group Testmode
  */
 #[Group('Testmode')]
+#[RunTestsInSeparateProcesses]
 class TermViewsTest extends TestmodeFunctionalTestBase {
 
   /**
