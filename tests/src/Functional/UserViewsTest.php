@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\testmode\Functional;
 
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\Attributes\Group;
 use Drupal\testmode\Testmode;
 use Drupal\views\Views;
@@ -14,6 +15,7 @@ use Drupal\views\Views;
  * @group Testmode
  */
 #[Group('Testmode')]
+#[RunTestsInSeparateProcesses]
 class UserViewsTest extends TestmodeFunctionalTestBase {
 
   /**
@@ -41,9 +43,7 @@ class UserViewsTest extends TestmodeFunctionalTestBase {
 
     // Login to bypass page caching.
     $user_with_access_user_profiles_permission = $this->drupalCreateUser(['access user profiles']);
-    if ($user_with_access_user_profiles_permission) {
-      $this->drupalLogin($user_with_access_user_profiles_permission);
-    }
+    $this->drupalLogin($user_with_access_user_profiles_permission);
 
     // Add test view to a list of views.
     $this->testmode->setUserViews('test_testmode_user');
@@ -91,9 +91,7 @@ class UserViewsTest extends TestmodeFunctionalTestBase {
 
     // Login to bypass page caching.
     $user_with_access_user_profiles_permission = $this->drupalCreateUser(['access user profiles']);
-    if ($user_with_access_user_profiles_permission) {
-      $this->drupalLogin($user_with_access_user_profiles_permission);
-    }
+    $this->drupalLogin($user_with_access_user_profiles_permission);
 
     // Add test view to a list of views.
     $this->testmode->setUserViews('test_testmode_user');

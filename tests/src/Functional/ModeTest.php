@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\testmode\Functional;
 
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -12,6 +13,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @group Testmode
  */
 #[Group('Testmode')]
+#[RunTestsInSeparateProcesses]
 class ModeTest extends TestmodeFunctionalTestBase {
 
   /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\testmode\Kernel;
 
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Drupal\KernelTests\KernelTestBase;
@@ -17,6 +18,7 @@ use Drupal\testmode\Testmode;
  * @group Testmode
  */
 #[Group('Testmode')]
+#[RunTestsInSeparateProcesses]
 class TestmodeConfigOverrideTest extends KernelTestBase {
 
   /**

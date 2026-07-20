@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\testmode\Functional;
 
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\Attributes\Group;
 use Drupal\Tests\search_api\Functional\ExampleContentTrait;
 use Drupal\search_api\Entity\Index;
@@ -15,6 +16,7 @@ use Drupal\testmode\Testmode;
  * @group Testmode
  */
 #[Group('Testmode')]
+#[RunTestsInSeparateProcesses]
 class SearchApiViewsTest extends TestmodeFunctionalTestBase {
 
   use ExampleContentTrait;
@@ -51,9 +53,7 @@ class SearchApiViewsTest extends TestmodeFunctionalTestBase {
 
     // Login to bypass page caching.
     $account = $this->drupalCreateUser();
-    if ($account) {
-      $this->drupalLogin($account);
-    }
+    $this->drupalLogin($account);
 
     // Add test view to a list of views.
     $this->testmode->setNodeViews('test_testmode_searchapi');

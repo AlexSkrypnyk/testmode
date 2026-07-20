@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\testmode\Functional;
 
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\Attributes\Group;
 use Drupal\testmode\Testmode;
 use Drupal\views\Views;
@@ -14,6 +15,7 @@ use Drupal\views\Views;
  * @group Testmode
  */
 #[Group('Testmode')]
+#[RunTestsInSeparateProcesses]
 class NodeViewsTest extends TestmodeFunctionalTestBase {
 
   /**
@@ -43,9 +45,7 @@ class NodeViewsTest extends TestmodeFunctionalTestBase {
 
     // Login to bypass page caching.
     $account = $this->drupalCreateUser();
-    if ($account) {
-      $this->drupalLogin($account);
-    }
+    $this->drupalLogin($account);
 
     // Add test view to a list of views.
     $this->testmode->setNodeViews('test_testmode_node');
@@ -93,9 +93,7 @@ class NodeViewsTest extends TestmodeFunctionalTestBase {
 
     // Login to bypass page caching.
     $account = $this->drupalCreateUser();
-    if ($account) {
-      $this->drupalLogin($account);
-    }
+    $this->drupalLogin($account);
 
     // Add test view to a list of Testmode views.
     $this->testmode->setNodeViews('test_testmode_node');
