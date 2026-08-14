@@ -17,7 +17,7 @@
         "source": "https://git.drupalcode.org/project/testmode"
     },
     "require": {
-        "php": ">=8.2"
+        "php": ">=8.3"
     },
     "suggest": {
         "drupal/search_api": "^1.25"
