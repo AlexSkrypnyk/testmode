@@ -55,7 +55,7 @@ resulting in a false-positive failure.
 
 ## Maintenance / Development
 
-Releases in GitHub are automatically pushed to http://drupal.org/project/testmode by CI.
+Releases in GitHub are automatically pushed to https://drupal.org/project/testmode by CI.
 
 ## Issues
 

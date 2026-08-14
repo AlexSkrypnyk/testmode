@@ -167,11 +167,3 @@ option (`--filter`, `--group`, etc.) to the `ahoy test` command:
 ahoy test-unit tests/src/Unit/MyUnitTest.php
 ahoy test-unit -- --group=wip
 ```
-
-You may also run tests using the `phpunit` command directly:
-
-```bash
-cd build
-php -d pcov.directory=.. vendor/bin/phpunit tests/src/Unit/MyUnitTest.php
-php -d pcov.directory=.. vendor/bin/phpunit --group=wip
-```
