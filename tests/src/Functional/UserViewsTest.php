@@ -42,7 +42,7 @@ class UserViewsTest extends TestmodeFunctionalTestBase {
     ]));
 
     // Login to bypass page caching.
-    $user_with_access_user_profiles_permission = $this->drupalCreateUser(['access user profiles']);
+    $user_with_access_user_profiles_permission = $this->createAccount(['access user profiles']);
     $this->drupalLogin($user_with_access_user_profiles_permission);
 
     // Add test view to a list of views.
@@ -90,7 +90,7 @@ class UserViewsTest extends TestmodeFunctionalTestBase {
     ]));
 
     // Login to bypass page caching.
-    $user_with_access_user_profiles_permission = $this->drupalCreateUser(['access user profiles']);
+    $user_with_access_user_profiles_permission = $this->createAccount(['access user profiles']);
     $this->drupalLogin($user_with_access_user_profiles_permission);
 
     // Add test view to a list of views.

@@ -52,7 +52,7 @@ class SearchApiViewsTest extends TestmodeFunctionalTestBase {
     ]));
 
     // Login to bypass page caching.
-    $account = $this->drupalCreateUser();
+    $account = $this->createAccount();
     $this->drupalLogin($account);
 
     // Add test view to a list of views.

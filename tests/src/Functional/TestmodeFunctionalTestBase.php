@@ -6,6 +6,7 @@ namespace Drupal\Tests\testmode\Functional;
 
 use Drupal\Tests\views\Functional\ViewTestBase;
 use Drupal\testmode\Testmode;
+use Drupal\user\Entity\User;
 use Drupal\views\Tests\ViewTestData;
 
 /**
@@ -45,6 +46,26 @@ abstract class TestmodeFunctionalTestBase extends ViewTestBase {
     }
 
     $this->testmode = Testmode::getInstance();
+  }
+
+  /**
+   * Creates a user account.
+   *
+   * @param string[] $permissions
+   *   Permissions to assign to the account.
+   *
+   * @return \Drupal\user\Entity\User
+   *   The created account.
+   */
+  protected function createAccount(array $permissions = []): User {
+    // Drupal 10 declares a 'User|false' return type for account creation.
+    $account = $this->drupalCreateUser($permissions);
+
+    if (!$account instanceof User) {
+      throw new \RuntimeException('Unable to create a user account.');
+    }
+
+    return $account;
   }
 
   /**
