@@ -168,10 +168,4 @@ ahoy test-unit tests/src/Unit/MyUnitTest.php
 ahoy test-unit -- --group=wip
 ```
 
-You may also run tests using the `phpunit` command directly:
-
-```bash
-cd build
-php -d pcov.directory=.. vendor/bin/phpunit tests/src/Unit/MyUnitTest.php
-php -d pcov.directory=.. vendor/bin/phpunit --group=wip
-```
+The same applies to the other suites, so `ahoy test-kernel`, `ahoy test-functional` and `ahoy test-functional-javascript` all accept a path or PHPUnit option in the same way.
