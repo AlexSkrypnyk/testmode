@@ -42,5 +42,13 @@ parameters:
       messages:
         - '#^Attribute class PHPUnit\\Framework\\Attributes\\.+ does not exist\.$#'
       reportUnmatched: false
+    -
+      # Drupal 10 documents 'createUser()' as returning 'User|false' while
+      # Drupal 11 declares ': UserInterface'. Narrowing the union in the tests
+      # would satisfy Drupal 10 but read as an always-true check on Drupal 11,
+      # which the dead-code rules reject, so the divergence is absorbed here.
+      messages:
+        - '#^Parameter \#1 \$account of method Drupal\\Tests\\BrowserTestBase::drupalLogin\(\) expects Drupal\\Core\\Session\\AccountInterface, Drupal\\user\\Entity\\User\|false given\.$#'
+      reportUnmatched: false
 
   reportUnmatchedIgnoredErrors: false
