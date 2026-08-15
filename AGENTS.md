@@ -83,7 +83,7 @@ Run each tool through its `ahoy` wrapper, never the binary directly:
 2. Develop Testmode code in `src/`
 3. Check standards: `ahoy lint`
 4. Run tests: `ahoy test`
-5. Access site at http://localhost:8000
+5. Access the site at the URL reported by `ahoy info` - the port is auto-discovered from the range 8000-8099, so it is not always 8000
 
 ## Code Quality Tools
 

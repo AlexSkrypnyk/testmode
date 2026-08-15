@@ -9,7 +9,7 @@ This directory contains scripts used for development. These can be used locally 
 | `deploy`      | Mirror the extension to a remote git repository (e.g. drupal.org). Used in CI.                         |
 | `browser`     | Start or stop the WebDriver backend used by FunctionalJavascript tests.                                |
 | `info`        | Print a summary of the environment, or a single field such as `site-url`, for the wrappers to consume. |
-| `qrcode`      | Render a URL as a scannable QR code in the terminal.                                                   |
+| `qrcode`      | Render a URL as a scannable QR code in the terminal. Opt-in: set `QRCODE=1` and install `qrencode`.    |
 | `helpers.php` | Shared PHP utilities (dotenv read/write, port discovery, drush wrappers, filesystem helpers).          |
 
 ## Verbose output
@@ -18,6 +18,6 @@ By default the scripts print only their own `[TASK]`/`[ OK ]` progress and suppr
 
 ## Custom scripts
 
-`assemble` and `provision` both look for `scripts/<prefix>-*.sh` in the project root and run any matches at the end of the phase. `assemble-*.sh` for post-assemble, `provision-*.sh` for post-provision. Scripts run in lexicographic order, inherit the parent environment, and a non-zero exit aborts the parent.
+`assemble`, `provision`, `start` and `stop` all look for `scripts/<prefix>-*.sh` in the project root and run any matches: `assemble-*.sh` and `provision-*.sh` at the end of their phase, `start-*.sh` after the server starts, and `stop-*.sh` before it stops. Scripts run in lexicographic order, inherit the parent environment, and a non-zero exit aborts the parent.
 
 See `CONTRIBUTING.md` in the project root for higher-level workflow documentation.
