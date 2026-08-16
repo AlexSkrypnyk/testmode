@@ -4,12 +4,11 @@ This file provides guidance to AI agents when working with code in this reposito
 
 ## Overview
 
-This is a Testmode template for creating contributed modules or themes. The project provides a complete development environment with CI configuration, testing setup, and deployment automation for publishing to Drupal.org.
+Testmode is a contributed Drupal module that alters existing site content and configuration while tests are running. The project provides a complete development environment with CI configuration, testing setup, and deployment automation for publishing to Drupal.org.
 
 ## Development Commands
 
-**HARD RULE - use the provided command wrappers, never the tool binaries directly.** When `make` or `ahoy` exposes a command for a task, use that command; do not call the underlying binary directly. Each wrapper `chdir`s into `build/` and runs the tool with the config, plugins, and environment that CI uses, so a raw invocation from the repository root silently diverges from CI - it can pass locally while CI fails (or vice versa), or crash outright when a relative path resolves against the wrong directory. If no wrapped command covers what you need, extend the `make` / `ahoy` target rather than making a one-off raw call; if that is not feasible, stop and ask.
-
+**HARD RULE - use the provided command wrappers, never the tool binaries directly.** When `ahoy` exposes a command for a task, use that command; do not call the underlying binary directly. Each wrapper `chdir`s into `build/` and runs the tool with the config, plugins, and environment that CI uses, so a raw invocation from the repository root silently diverges from CI - it can pass locally while CI fails (or vice versa), or crash outright when a relative path resolves against the wrong directory. If no wrapped command covers what you need, extend the `ahoy` target rather than making a one-off raw call; if that is not feasible, stop and ask.
 
 Run each tool through its `ahoy` wrapper, never the binary directly:
 
@@ -22,8 +21,6 @@ Run each tool through its `ahoy` wrapper, never the binary directly:
 
 ### Build and Environment Management
 
-
-**Using Ahoy (alternative):**
 - `ahoy build` - Complete build process
 - `ahoy assemble` - Assemble codebase
 - `ahoy start` - Start development server
@@ -40,9 +37,9 @@ Run each tool through its `ahoy` wrapper, never the binary directly:
 - `ahoy test-unit` - Run unit tests only
 - `ahoy test-kernel` - Run kernel tests only
 - `ahoy test-functional` - Run functional tests only
-- `ahoy test-functional-javascript` - Run FunctionalJavascript tests (requires Selenium)
-- `ahoy selenium-start` - Start Selenium container
-- `ahoy selenium-stop` - Stop Selenium container
+- `ahoy test-functional-javascript` - Run FunctionalJavascript tests (uses the local Chrome by default; set `WEBDRIVER_BACKEND=selenium` for Docker)
+- `ahoy browser-start` - Start the browser for FunctionalJavascript tests (local Chrome by default; set `WEBDRIVER_BACKEND=selenium` for Docker)
+- `ahoy browser-stop` - Stop the browser
 
 ### Drupal Commands
 
@@ -61,11 +58,7 @@ Run each tool through its `ahoy` wrapper, never the binary directly:
 - `config/schema/` - Configuration schema definitions
 - `build/` - Assembled Drupal codebase (symlinked extension)
 - `.devtools/` - Build and deployment scripts used by CI
-- `scripts/` - Custom post-assemble (`assemble-*.sh`) and post-provision (`provision-*.sh`) hooks. Run automatically at the end of each phase in lexicographic order; non-zero exit aborts the parent. Excluded from distribution archives via `.gitattributes`
-
-**Template Files (before init):**
-- `testmode.*` - Template extension files
-- `TestmodeService.php` - Main service class template
+- `scripts/` - Custom lifecycle hooks: post-assemble (`assemble-*.sh`), post-provision (`provision-*.sh`), post-start (`start-*.sh`), and pre-stop (`stop-*.sh`). Run automatically during each phase in lexicographic order; non-zero exit aborts the parent. Excluded from distribution archives via `.gitattributes`
 
 ## Architecture
 
@@ -79,16 +72,18 @@ Run each tool through its `ahoy` wrapper, never the binary directly:
 - `DRUPAL_VERSION` - Target Drupal version (e.g., `10`, `11`, `11@alpha`)
 - `WEBSERVER_HOST` - Development server host (default: localhost)
 - `WEBSERVER_PORT` - Development server port. Auto-discovered from range 8000-8099 and written to `.env` if not already set
+- `WEBDRIVER_BACKEND` - FunctionalJavascript WebDriver backend: `chromedriver` (default, drives the locally installed Chrome with no Docker) or `selenium` (Docker container)
+- `WEBDRIVER_PORT` - Port for the WebDriver endpoint (both backends). Auto-discovered from 4444 and written to `.env` if not already set, so several projects can run FunctionalJavascript tests simultaneously
 - `GITHUB_TOKEN` - GitHub API token to avoid rate limits
+- `DEBUG` - Set to `1` to stream the full output of the underlying commands (Composer, npm, Drush). By default this output is suppressed and shown only when a command fails
 
 ## Development Workflow
 
-1. Run `php init.php` to customize template for Testmode
-2. Build environment: `make build` or `ahoy build`
-3. Develop Testmode code in `src/`
-4. Check standards: `make lint` or `ahoy lint`
-5. Run tests: `make test` or `ahoy test`
-6. Access site at http://localhost:8000
+1. Build environment: `ahoy build`
+2. Develop Testmode code in `src/`
+3. Check standards: `ahoy lint`
+4. Run tests: `ahoy test`
+5. Access the site at the URL reported by `ahoy info` - the port is auto-discovered from the range 8000-8099, so it is not always 8000
 
 ## Code Quality Tools
 
@@ -100,8 +95,7 @@ Run each tool through its `ahoy` wrapper, never the binary directly:
 ## CI/CD Support
 
 - **GitHub Actions**: `.github/workflows/test.yml` and deployment
-- **CircleCI**: `.circleci/config.yml` configuration
-- **Matrix testing**: PHP 8.2-8.5, Drupal 10-11
+- **Matrix testing**: PHP 8.3-8.5, Drupal 10-11
 - **Automated deployment**: Mirror to Drupal.org on release
 
 ## Important Notes

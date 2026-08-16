@@ -52,7 +52,6 @@ abstract class TestmodeFunctionalTestBase extends ViewTestBase {
    */
   protected function drupalLoginAdmin(): void {
     $user = $this->createUser([], NULL, TRUE);
-    // @phpstan-ignore-next-line
     $this->drupalLogin($user);
   }
 
