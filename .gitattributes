@@ -4,15 +4,12 @@ AGENTS.md          export-ignore
 CLAUDE.md          export-ignore
 .claude            export-ignore
 .ahoy.yml          export-ignore
-.circleci          export-ignore
-.devtools          export-ignore
 .editorconfig      export-ignore
 .gitattributes     export-ignore
 .github            export-ignore
 .gitignore         export-ignore
 .skip_npm_build    export-ignore
 .twig-cs-fixer.php export-ignore
-Makefile           export-ignore
 composer.dev.json  export-ignore
 package-lock.json  export-ignore
 package.json       export-ignore

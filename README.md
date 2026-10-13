@@ -19,6 +19,7 @@
 ![PHP 8.5](https://img.shields.io/badge/PHP-8.5-777BB4.svg)
 ![Drupal 10](https://img.shields.io/badge/Drupal-10-009CDE.svg)
 ![Drupal 11](https://img.shields.io/badge/Drupal-11-006AA9.svg)
+![Drupal 12](https://img.shields.io/badge/Drupal-12-004B7A.svg)
 
 </div>
 
@@ -59,8 +60,7 @@ https://www.drupal.org/project/issues/testmode
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for local development, building the
-site, checking coding standards, and running the tests.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for local development, building the site, checking coding standards, and running the tests.
 
 ---
-_This repository was created using the [Drupal Extension Scaffold](https://github.com/AlexSkrypnyk/drupal_extension_scaffold) project template_
+_This repository was created using the [Eddy](https://github.com/drevops/eddy) project template_
