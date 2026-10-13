@@ -24,7 +24,9 @@ Run each tool through its `ahoy` wrapper, never the binary directly:
 - `ahoy build` - Complete build process
 - `ahoy assemble` - Assemble codebase
 - `ahoy start` - Start development server
+- `ahoy stop` - Stop development server
 - `ahoy provision` - Provision Drupal site
+- `ahoy reset` - Clean build directory, logs and installed tooling (aliases: `ahoy delete`, `ahoy destroy`)
 
 ### Code Quality
 
@@ -37,9 +39,6 @@ Run each tool through its `ahoy` wrapper, never the binary directly:
 - `ahoy test-unit` - Run unit tests only
 - `ahoy test-kernel` - Run kernel tests only
 - `ahoy test-functional` - Run functional tests only
-- `ahoy test-functional-javascript` - Run FunctionalJavascript tests (uses the local Chrome by default; set `WEBDRIVER_BACKEND=selenium` for Docker)
-- `ahoy browser-start` - Start the browser for FunctionalJavascript tests (local Chrome by default; set `WEBDRIVER_BACKEND=selenium` for Docker)
-- `ahoy browser-stop` - Stop the browser
 
 ### Drupal Commands
 
@@ -48,7 +47,7 @@ Run each tool through its `ahoy` wrapper, never the binary directly:
 
 ### Diagnostics
 
-- `ahoy info` - Print a read-only summary of PHP/Drupal/Composer/Drush/Node versions, webserver host/port (with source), XDebug state, build directory, database path, and active profile. (alias: `ahoy describe`)
+- `ahoy info` - Print a read-only summary of PHP/Drupal/Composer/Drush/Node/npm versions, webserver host/port (with source), site URL, XDebug state, WebDriver port, build directory, database path, and active profile. (alias: `ahoy describe`)
 
 ## Project Structure
 
@@ -57,7 +56,8 @@ Run each tool through its `ahoy` wrapper, never the binary directly:
 - `tests/src/` - PHPUnit tests (Unit/, Kernel/, Functional/)
 - `config/schema/` - Configuration schema definitions
 - `build/` - Assembled Drupal codebase (symlinked extension)
-- `.devtools/` - Build and deployment scripts used by CI
+- `vendor/` - The installed `drevops/eddy-tooling` package, whose commands (`vendor/bin/eddy-*`) assemble, start, provision and deploy the extension. Not committed and not part of the extension
+- `scripts/eddy-tooling` - Installs the tooling package into `vendor/` from the constraint in `composer.dev.json`. The command wrappers and CI run it before the tooling commands
 - `scripts/` - Custom lifecycle hooks: post-assemble (`assemble-*.sh`), post-provision (`provision-*.sh`), post-start (`start-*.sh`), and pre-stop (`stop-*.sh`). Run automatically during each phase in lexicographic order; non-zero exit aborts the parent. Excluded from distribution archives via `.gitattributes`
 
 ## Architecture
@@ -69,11 +69,9 @@ Run each tool through its `ahoy` wrapper, never the binary directly:
 
 ## Environment Variables
 
-- `DRUPAL_VERSION` - Target Drupal version (e.g., `10`, `11`, `11@alpha`)
+- `DRUPAL_VERSION` - Target Drupal version (e.g., `10`, `11`, `11@alpha`, `12@beta`). Defaults to `extra.eddy.drupal-version` in `composer.dev.json`
 - `WEBSERVER_HOST` - Development server host (default: localhost)
 - `WEBSERVER_PORT` - Development server port. Auto-discovered from range 8000-8099 and written to `.env` if not already set
-- `WEBDRIVER_BACKEND` - FunctionalJavascript WebDriver backend: `chromedriver` (default, drives the locally installed Chrome with no Docker) or `selenium` (Docker container)
-- `WEBDRIVER_PORT` - Port for the WebDriver endpoint (both backends). Auto-discovered from 4444 and written to `.env` if not already set, so several projects can run FunctionalJavascript tests simultaneously
 - `GITHUB_TOKEN` - GitHub API token to avoid rate limits
 - `DEBUG` - Set to `1` to stream the full output of the underlying commands (Composer, npm, Drush). By default this output is suppressed and shown only when a command fails
 
@@ -95,8 +93,11 @@ Run each tool through its `ahoy` wrapper, never the binary directly:
 ## CI/CD Support
 
 - **GitHub Actions**: `.github/workflows/test.yml` and deployment
-- **Matrix testing**: PHP 8.3-8.5, Drupal 10-11
-- **Automated deployment**: Mirror to Drupal.org on release
+- **Matrix testing**:
+  - Drupal 10 on PHP 8.3-8.4
+  - Drupal 11 on PHP 8.3-8.5
+  - Drupal 12 on PHP 8.5
+- **Automated deployment**: Mirror to Drupal.org after CI passes
 
 ## Important Notes
 
@@ -107,20 +108,21 @@ Run each tool through its `ahoy` wrapper, never the binary directly:
 
 ## Updating the scaffold
 
-When the user asks to update this project's scaffold (e.g. "update scaffold"), fetch the update skill from GitHub into the local `.claude/skills/` directory, then invoke it:
+When the user asks to update this project's scaffold (e.g. "update scaffold" or "update Eddy"), fetch the update skill from GitHub into the local `.claude/skills/` directory, then invoke it:
 
 1. Create the target directory if it does not exist:
 
    ```bash
-   mkdir -p .claude/skills/update-consumer-drupal-extension-scaffold
+   mkdir -p .claude/skills/update-consumer-eddy
    ```
 
 2. Download the skill:
 
    ```bash
-   curl -sSL https://raw.githubusercontent.com/AlexSkrypnyk/drupal_extension_scaffold/1.x/.scaffold/skills/update-consumer-drupal-extension-scaffold/SKILL.md -o .claude/skills/update-consumer-drupal-extension-scaffold/SKILL.md
+   curl -fsSL -o .claude/skills/update-consumer-eddy/SKILL.md \
+     https://raw.githubusercontent.com/drevops/eddy/main/.eddy/skills/update-consumer-eddy/SKILL.md
    ```
 
-3. Invoke the `update-consumer-drupal-extension-scaffold` skill and follow its steps.
+3. Invoke the `update-consumer-eddy` skill and follow its steps.
 
 The skill directory is git-ignored - it is fetched on demand and not committed to the project.

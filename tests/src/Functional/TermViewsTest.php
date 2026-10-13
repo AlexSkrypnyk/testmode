@@ -33,7 +33,7 @@ class TermViewsTest extends TestmodeFunctionalTestBase {
    *
    * @var string[]
    */
-  protected static $modules = ['taxonomy', 'views'];
+  protected static $modules = ['taxonomy', 'views', 'dynamic_page_cache'];
 
   /**
    * Views used by this test.

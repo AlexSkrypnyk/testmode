@@ -23,7 +23,7 @@ class UserViewsTest extends TestmodeFunctionalTestBase {
    *
    * @var array<string>
    */
-  protected static $modules = ['user', 'views'];
+  protected static $modules = ['user', 'views', 'dynamic_page_cache'];
 
   /**
    * Views used by this test.
