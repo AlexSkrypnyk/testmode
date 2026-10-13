@@ -1,0 +1,11 @@
+diff --git a/modules/search_api_db/search_api_db.info.yml b/modules/search_api_db/search_api_db.info.yml
+--- a/modules/search_api_db/search_api_db.info.yml
++++ b/modules/search_api_db/search_api_db.info.yml
+@@ -2,6 +2,6 @@
+ name: Database Search
+ description: Offers an implementation of the Search API that uses database tables for indexing content.
+ package: Search
+-core_version_requirement: ^10.2 || ^11
++core_version_requirement: ^10.2 || ^11 || ^12
+ dependencies:
+   - search_api:search_api

@@ -35,6 +35,10 @@
             "version": "5.0.0-alpha3"
         },
         "phpcodesniffer-search-depth": 10,
-        "patches": {}
+        "patches": {
+            "drupal/search_api": {
+                "Add Drupal 12 to the 'search_api_db' core version requirement": "patches/search_api-search_api_db-drupal-12.patch"
+            }
+        }
     }
 }
