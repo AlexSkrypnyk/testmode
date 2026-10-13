@@ -13,8 +13,6 @@ use Drupal\testmode\Testmode;
 /**
  * Tests that Testmode respects $config[...] overrides from settings.php.
  *
- * See https://github.com/AlexSkrypnyk/testmode/issues/46.
- *
  * @group Testmode
  */
 #[Group('Testmode')]
