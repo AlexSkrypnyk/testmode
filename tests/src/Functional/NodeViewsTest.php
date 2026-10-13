@@ -23,7 +23,7 @@ class NodeViewsTest extends TestmodeFunctionalTestBase {
    *
    * @var string[]
    */
-  protected static $modules = ['node', 'views'];
+  protected static $modules = ['node', 'views', 'dynamic_page_cache'];
 
   /**
    * Views used by this test.
