@@ -101,7 +101,6 @@ jobs:
         run: vendor/bin/twig-cs-fixer
         continue-on-error: ${{ vars.CI_TWIGCSFIXER_IGNORE_FAILURE == '1' }}
 
-
   test:
     runs-on: ubuntu-26.04
 
@@ -154,7 +153,6 @@ jobs:
             php-version: 8.5
             drupal-version: 12@beta
             stability: canary
-
 
     name: ${{ matrix.name }}
 
@@ -232,7 +230,6 @@ jobs:
 
       - name: Provision site
         run: vendor/bin/eddy-provision
-
 
       - name: Run tests
         if: ${{ env.CI_IS_PHPUNIT_RUNNER == 'true' }}

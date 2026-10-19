@@ -11,7 +11,7 @@
 [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/drevops/testmode.svg)](https://github.com/drevops/testmode/pulls)
 [![Test](https://github.com/drevops/testmode/actions/workflows/test.yml/badge.svg)](https://github.com/drevops/testmode/actions/workflows/test.yml)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/drevops/testmode)
-![LICENSE](https://img.shields.io/github/license/drevops/testmode)
+![License: GPL-2.0-or-later](https://img.shields.io/badge/license-GPL--2.0--or--later-orange.svg)
 ![Renovate](https://img.shields.io/badge/renovate-enabled-green?logo=renovatebot)
 
 ![PHP 8.3](https://img.shields.io/badge/PHP-8.3-777BB4.svg)
