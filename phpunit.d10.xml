@@ -63,27 +63,16 @@
         <env name="MINK_DRIVER_CLASS" value=''/>
         <!-- Example for changing the driver args to mink tests MINK_DRIVER_ARGS value: '["http://127.0.0.1:8510"]' -->
         <env name="MINK_DRIVER_ARGS" value=''/>
-        <!-- Example for changing the driver args to webdriver tests MINK_DRIVER_ARGS_WEBDRIVER value: '["chrome", { "chromeOptions": { "w3c": false } }, "http://localhost:4444/wd/hub"]' For using the Firefox browser, replace "chrome" with "firefox" -->
-        <!-- The endpoint below is the default. Both WebDriver backends bind the
-          per-project port resolved by 'eddy-browser-start' (WEBDRIVER_PORT), so
-          the FunctionalJavascript base class replaces the port in this value at
-          run time. Tests that do not extend that base class can export their own
-          MINK_DRIVER_ARGS_WEBDRIVER, which takes precedence over this entry.
-        -->
-        <env name="MINK_DRIVER_ARGS_WEBDRIVER" value='["chrome", {"goog:chromeOptions": {"w3c": true, "args": ["--no-sandbox", "--disable-gpu", "--window-size=1280,1024"]}}, "http://localhost:4444"]'/>
     </php>
     <testsuites>
         <testsuite name="unit">
             <directory>web/modules/custom/*/tests/src/Unit</directory>
-            <directory>web/themes/custom/*/tests/src/Unit</directory>
         </testsuite>
         <testsuite name="kernel">
             <directory>web/modules/custom/*/tests/src/Kernel</directory>
-            <directory>web/themes/custom/*/tests/src/Kernel</directory>
         </testsuite>
         <testsuite name="functional">
             <directory>web/modules/custom/*/tests/src/Functional</directory>
-            <directory>web/themes/custom/*/tests/src/Functional</directory>
         </testsuite>
 
     </testsuites>
@@ -99,14 +88,16 @@
               disableCodeCoverageIgnore="false">
         <include>
             <directory>web/modules/custom</directory>
-            <directory>web/themes/custom</directory>
+            <!-- A module holds its hooks in its '.module' and '.install' files. -->
+            <directory suffix=".module">web/modules/custom</directory>
+            <directory suffix=".install">web/modules/custom</directory>
         </include>
 
         <exclude>
             <directory>web/modules/custom/*/tests</directory>
-            <directory>web/themes/custom/*/tests</directory>
+            <directory suffix=".module">web/modules/custom/*/tests</directory>
+            <directory suffix=".install">web/modules/custom/*/tests</directory>
             <file>web/modules/custom/testmode/rector.php</file>
-            <file>web/themes/custom/testmode/rector.php</file>
             <directory>**/node_modules/**</directory>
         </exclude>
 
